@@ -4,37 +4,37 @@ Hash: SHA256
 Architectures: amd64 arm64
 Codename: stable
 Components: main
-Date: Tue, 30 Jun 2026 07:25:52 +0000
+Date: Tue, 30 Jun 2026 07:29:32 +0000
 Origin: SkimMail
 Suite: stable
 MD5Sum:
- 2445fb310992f394a8ab3085e319f454              130 Release
+ 5a9f2593c8b1f854b096016f7d5fb0ae              130 Release
  7dffe3c6260cdbf30547e12c239c923a              603 main/binary-amd64/Packages
- 3a997f05ac210e48c24b4a84eeab51df              457 main/binary-amd64/Packages.gz
+ a16442ffed616d0fca8bc67adde14038              457 main/binary-amd64/Packages.gz
  93a0ce6195cc0b6f0c11da6b53884a5c              603 main/binary-arm64/Packages
- ac06667b2c3bc41a5d073db3dcaf52ae              459 main/binary-arm64/Packages.gz
+ 77e8f616b0e923857df2210f593dcfc4              459 main/binary-arm64/Packages.gz
 SHA1:
- fe0669dfc552ed61b9fc7803011cde8beba145ce              130 Release
+ 861bc1f4d7ae2d5e5c220a93f8d9816f0e9e565b              130 Release
  e67a0de7d676f579eac63926fca2d95b2c17ffa1              603 main/binary-amd64/Packages
- b7368d87cc4863eb16f6b3be53aad1717d6ed5e5              457 main/binary-amd64/Packages.gz
+ 3a6a53fde7237a621cb543c286451735a45331ca              457 main/binary-amd64/Packages.gz
  0a12ee4deef432e20f0645bd6b74866ccb63b481              603 main/binary-arm64/Packages
- 12b772f1fce71c289fa220fce5dc6d1872bd1d2e              459 main/binary-arm64/Packages.gz
+ fe48f0216ec60b569174d55f2a8be0d18178ba97              459 main/binary-arm64/Packages.gz
 SHA256:
- 4f5164a3e6fe76e13436681faa5378e4e43aec5c7c074f0c63134696d2bd137d              130 Release
+ 0fb8070c51b0b122da31021777cee831f1f8605abe8e3b678a8b4ce0a90c74b7              130 Release
  676d01dd5ef993f8d6a6b0b9a28e053656b1e9516d489f03d7394901b65286ac              603 main/binary-amd64/Packages
- 8392c0d28b0f214833fa99e4db3f240442505ddbad86d9fc6d3e9eef144c4ba5              457 main/binary-amd64/Packages.gz
+ 413fabb3b02c6ec703e993cc494d59708a760f07bf33364d70e21c46a8df9562              457 main/binary-amd64/Packages.gz
  709c4db00eba0f5b26114c91175e6aaf2848bf4a496387eeb551069560038faf              603 main/binary-arm64/Packages
- e3c8a19a7e618ba96a281e890ae344164f23237e5f0c6e1b5002776fe43622d7              459 main/binary-arm64/Packages.gz
+ 7e2bad4e16936766b20797930b4b652c995a014362dc1a12b17e964a455acd69              459 main/binary-arm64/Packages.gz
 SHA512:
- c9986d84f3f1848a15d4f672caf25794e50a2aed214981ed5360805a6eeb70508e41fdef82479dc89fc7b057def3e19df98065dfd729cc2c782587e5002b2c24              130 Release
+ 7292d4b86960903fea0c996f869259806a09ce77fe70e427249f074c64b36b6416a8b610c202a0bf433594b5d1f6f61e746712d0bfbf43381ec753dd9106aff2              130 Release
  9fb198a6ddc0c665027eac3719a2db68226d919798bdcc44c4bdeee93e326e23eec4897b9d82d4def241fe5f2693a5ad686aa4ce40d8cdffb6517c78bd36e48f              603 main/binary-amd64/Packages
- b70d59c1855203ac4b2012498ce39197585f33ec16f5fb904b95a6ea163cc9a33a2c1ae6ec7ef6a1a84a4a1fff3dccf9d754959dd89262c003c3cd4b9e87025d              457 main/binary-amd64/Packages.gz
+ ae78a31136c423d0f92df24a57810084b2a83210d11bf24df5a0c14a855d7e57419d74cf39d7fcfd99af3625a8d40fce1d4a5c196e3f6ba86326f153516d2d51              457 main/binary-amd64/Packages.gz
  1c71a286cd083e7f35a382f7d0f493c7de2cfe7573822732b39dd10d006fc63cdd633d248f230e74b07cf8d1e500560808ea923ea860db80fdc5c4770d3963a8              603 main/binary-arm64/Packages
- 3a6f33e18b9ebe41809905f7fa541619894a8c127926e37b00585c2b79d32ce6521e50b4fba24ce73b917152990b875ec1afa12364479a2fc5a4ca90a91a0850              459 main/binary-arm64/Packages.gz
+ 05ef5176f68b29ce5b095f75e1f63637388479552bb47e16ad0f279813c330b9a235dbf50627d7699a13abaabd82cbfc6795289108f324f126ce4adfe33c3482              459 main/binary-arm64/Packages.gz
 -----BEGIN PGP SIGNATURE-----
 
-iHUEARYIAB0WIQQgQyEVxFgVI9IZFgeOScWauJQL2wUCakNvgAAKCRCOScWauJQL
-26FzAQDt4s47Ia9hVFbICmUzPgK8nxXQvaApTHuV1nmEWN1H1wEAhYhDjAZBST/f
-9zsiES0OxJCObtwhoBpqYsMlJv4fgg4=
-=ImuJ
+iHUEARYIAB0WIQQgQyEVxFgVI9IZFgeOScWauJQL2wUCakNwXAAKCRCOScWauJQL
+252RAQDwBkWYNX7jNL7KEjjqXaVnSVBR6bjt7W+7amCHWXmcZgD+Plun3i3aGko4
+WoT3m+eiR8Tbf9/iH/oCWniEyq/wGQ0=
+=hXI4
 -----END PGP SIGNATURE-----
