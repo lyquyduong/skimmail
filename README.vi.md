@@ -4,9 +4,12 @@
 
 > Lướt nhanh mọi hộp thư. Trình đọc email **đọc-trước (read-first)**, đa tài khoản,
 > tự host, nhẹ — lõi IMAP + OAuth Gmail/Outlook — đóng gói thành **một file binary
-> Go duy nhất** nhúng sẵn React SPA. Mặc định **không cần dịch vụ ngoài**.
+> Go duy nhất** nhúng sẵn React SPA. **Không cần dịch vụ ngoài**.
 
 **Giấy phép:** AGPL-3.0-or-later (+ CLA, xem [`CLA.md`](CLA.md)) · **Bảo mật:** [`SECURITY.md`](SECURITY.md)
+
+> **Đây là bản `0.1.0`** — trình đọc email tập trung + nhóm tài khoản. Các phần
+> khác (AI, thông báo, lưu trữ cắm được, tự cập nhật trong app) nằm trong roadmap.
 
 ---
 
@@ -17,22 +20,19 @@
   Google/Azure của riêng bạn*.
 - **Hộp thư hợp nhất** xuyên mọi tài khoản, **gom luồng (threading)** nhẹ, **giao
   diện 3 khung** với khung đọc cô lập (sanitize HTML, chặn ảnh từ xa).
+- **Nhóm tài khoản** — gom nhiều tài khoản vào các nhóm có tên + màu, đọc mail theo
+  từng nhóm.
 - **Thời gian thực**: mail mới đẩy qua IMAP **IDLE → WebSocket**, kèm **poll dự
   phòng** để mail vẫn về nếu IDLE rớt — backend đồng bộ cả khi không có client mở.
 - **Tìm kiếm 2 tầng** — full-text cục bộ nhanh (SQLite FTS5) + tùy chọn **fallback
   phía server** để tìm cả mail ngoài phạm vi đã cache.
 - **Đọc nhanh** — tạm ẩn (snooze), ghim (pin), **bundles** chia hộp thư, chọn nhiều
   + thao tác hàng loạt, sender **VIP / mute**, **hủy đăng ký 1 chạm** (RFC 8058).
-- **AI (tùy chọn, dùng key của bạn)** — tóm tắt, phân loại, trích action, dịch — qua
-  **Claude / OpenAI-compatible / Ollama**. Mặc định tắt.
-- **Bàn phím trước hết** (kiểu Superhuman) + **chế độ Focus/triage** + **PWA** (cài
-  được, chạy offline phần vỏ) + **đa ngôn ngữ** (English / Tiếng Việt / 中文, giao
-  diện sáng & tối).
-- **Lưu trữ cắm được (nâng cao)** — mặc định **SQLite + filesystem**; tùy chọn
-  **Postgres/MySQL** và blob **tương thích S3** qua build tag.
-- **Bộ điều phối sync** (đồng thời + giới hạn nhịp + hàng đợi ưu tiên) và lớp **bảo
-  mật**: rate-limit + lockout đăng nhập, kiểm tra CSRF/Origin, chống SSRF, mã hoá
-  credential at-rest, và **audit log**.
+- **Bàn phím trước hết** (kiểu Superhuman) + **chế độ Focus/triage** + **command
+  palette** (⌘K) + **PWA** (cài được, chạy offline phần vỏ) + **đa ngôn ngữ**
+  (English / Tiếng Việt / 中文, giao diện sáng & tối).
+- **Đồng bộ nền luôn-bật** và lớp **bảo mật**: rate-limit + lockout đăng nhập, kiểm
+  tra CSRF/Origin, chống SSRF, mã hoá credential at-rest, và **audit log**.
 
 ## Yêu cầu
 
@@ -47,21 +47,25 @@ Chỉ cần **Docker** — SQLite tích hợp sẵn, không cần dịch vụ ng
 docker compose up --build          # → http://localhost:8080  (SQLite + filesystem)
 ```
 
-Thử **stack stateless** (Postgres + S3/MinIO) bằng profile `advanced`:
-
-```bash
-docker compose --profile advanced up --build
-# → skimmail:      http://localhost:8081
-# → MinIO console: http://localhost:9001  (minioadmin / minioadmin)
-docker compose --profile advanced down -v   # dừng + xoá volume
-```
-
 Hoặc chạy image thuần (distroless + non-root; dữ liệu ở volume `/data`):
 
 ```bash
-docker build -t skimmail .
-docker run -p 8080:8080 -v skimmail-data:/data skimmail
+docker run -d -p 8080:8080 -v skimmail-data:/data \
+  -e AUTH_MODE=passphrase ghcr.io/lyquyduong/skimmail:latest
 ```
+
+### Cài trên Ubuntu / Debian (apt)
+
+```bash
+curl -fsSL https://lyquyduong.github.io/skimmail/apt/skimmail.gpg \
+  | sudo tee /usr/share/keyrings/skimmail.gpg >/dev/null
+echo "deb [signed-by=/usr/share/keyrings/skimmail.gpg] https://lyquyduong.github.io/skimmail/apt stable main" \
+  | sudo tee /etc/apt/sources.list.d/skimmail.list
+sudo apt update && sudo apt install skimmail      # chạy như systemd service → http://localhost:8080
+```
+
+Cấu hình ở `/etc/default/skimmail`; nâng cấp qua `apt upgrade`. Mọi kênh phát hành
+(image, `.deb`, apt repo) đều ship từ GitHub — xem [`DISTRIBUTION.md`](DISTRIBUTION.md).
 
 ### Đăng nhập lần đầu
 
@@ -86,13 +90,13 @@ Bấm **↻ Sync** (hoặc đợi poll nền). Sau đó mail mới đẩy về t
 
 - **Tìm kiếm** — gõ vào ô search (Enter). Khi chọn 1 account, nút **"Search server ↗"**
   còn tìm trên máy chủ mail và cache kết quả.
+- **Nhóm** — tạo nhóm tài khoản ở **Settings → Groups**; chọn 1 nhóm để chỉ đọc mail
+  của các tài khoản trong nhóm đó.
 - **Bundles** — lọc danh sách theo Primary / Newsletter / Transactional /
   Notifications. **💤 Snoozed** xem mail đang tạm ẩn.
 - **Chọn nhiều** — tick các dòng để **bulk** read / archive / delete.
 - **Khung đọc** — 🗄 Archive · 🗑 Delete (có **Undo**) · 💤 Snooze · 📌 Pin ·
-  ✨ Summarize · ⚡ Actions · 🌐 Translate · ✉️ Unsubscribe · ★ VIP · 🔇 Mute.
-- **AI** — mở **🤖 AI settings**, bật lên, chọn vendor + model + key (hoặc dùng
-  **Ollama** local không cần key). Nội dung mail sẽ gửi tới vendor bạn chọn.
+  ✉️ Unsubscribe · ★ VIP · 🔇 Mute.
 - **Bàn phím** — `?` hiện toàn bộ phím tắt: `j`/`k` di chuyển · `Enter`/`o` mở ·
   `e` archive · `#` delete · `s` snooze · `x` chọn · `Space` xem nhanh ·
   `/` tìm kiếm · **`f` chế độ Focus** ("Get to Zero") · `Esc` đóng.
@@ -114,36 +118,19 @@ Cấu hình qua biến môi trường (12-factor). Xem [`.env.example`](.env.exa
 | `TRUST_PROXY` | `false` | tin `X-Forwarded-*` sau reverse proxy |
 | `TRUSTED_ORIGINS` | – | origin được phép thêm cho CORS/CSRF (phân tách dấu phẩy) |
 | `BACKGROUND_POLL_INTERVAL` | `5m` | chu kỳ poll dự phòng cho mọi account |
-| `MAX_CONCURRENT_SYNCS` | `4` | số mailbox đồng bộ cùng lúc tối đa (scheduler) |
+| `MAX_CONCURRENT_SYNCS` | `4` | số mailbox đồng bộ cùng lúc tối đa |
 | `SYNC_RATE_PER_MIN` | `10` | số lượt sync khởi động mỗi phút (stagger) |
 | `SYNC_DEPTH_DAYS` | `30` | cửa sổ sync header (0 = toàn bộ lịch sử) |
 | `GOOGLE_CLIENT_ID` / `_SECRET` | – | OAuth app Gmail (tùy chọn) |
 | `MICROSOFT_CLIENT_ID` / `_SECRET` | – | OAuth app Outlook (tùy chọn) |
-| `DB_DRIVER` | `sqlite` | `sqlite` \| `postgres` \| `mysql` (nâng cao) |
-| `DATABASE_URL` | – | DSN khi `DB_DRIVER` ≠ sqlite |
-| `BLOB_STORE` | `fs` | `fs` \| `s3` (nâng cao) |
-| `S3_ENDPOINT` / `S3_BUCKET` / `S3_REGION` / `S3_ACCESS_KEY` / `S3_SECRET_KEY` / `S3_FORCE_PATH_STYLE` | – | blob store tương thích S3 |
-
-### Nâng cao: Postgres / MySQL / S3
-
-Image mặc định là SQLite + filesystem cục bộ. Muốn chạy trên **Postgres/MySQL** với
-blob **tương thích S3**, dùng profile **`advanced`** của Compose (ở trên), hoặc build
-image riêng có backend biên dịch sẵn:
-
-```bash
-docker build --build-arg TAGS="postgres s3" -t skimmail:advanced .
-```
-
-Sau đó đặt `DB_DRIVER` / `DATABASE_URL` / `BLOB_STORE` / `S3_*` theo bảng trên (DSN
-MySQL cần `multiStatements=true`). Chi tiết build từ nguồn: [`README.dev.md`](README.dev.md).
 
 ---
 
 ## Bảo mật
 
-Credential và token AI/OAuth được mã hoá at-rest (AES-256-GCM). Server áp
-rate-limit + lockout đăng nhập, kiểm tra CSRF/Origin, chống SSRF cho fetch ra
-ngoài, security headers nghiêm ngặt + iframe email cô lập, và audit log append-only
+Credential và token OAuth được mã hoá at-rest (AES-256-GCM). Server áp rate-limit +
+lockout đăng nhập, kiểm tra CSRF/Origin, chống SSRF cho fetch ra ngoài, security
+headers nghiêm ngặt + iframe email cô lập, và audit log append-only
 (`GET /api/audit`). Xem [`SECURITY.md`](SECURITY.md) để biết tư thế bảo mật đầy đủ
 và cách báo lỗ hổng.
 
