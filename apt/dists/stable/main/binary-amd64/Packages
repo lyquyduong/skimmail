@@ -1,0 +1,17 @@
+Package: skimmail
+Version: 0.1.0
+Architecture: amd64
+Maintainer: lyquyduong <noreply@users.noreply.github.com>
+Installed-Size: 14781
+Filename: pool/main/skimmail_0.1.0_amd64.deb
+Size: 7013526
+MD5sum: be68145b304935405c735ce1a07731b3
+SHA1: 23acbb14bbead9dcd22e8b923941eb64ae5e0f79
+SHA256: 83be561099d7ebf0fce48b48715e5c879e8a7479d2c8c8b038869d96d09a752b
+Section: mail
+Priority: optional
+Homepage: https://github.com/lyquyduong/skimmail
+Description: SkimMail — lightweight, self-hosted multi-account email reader.
+ Reads IMAP/Gmail/Outlook fast with a keyboard-first web UI.
+License: AGPL-3.0-or-later
+
