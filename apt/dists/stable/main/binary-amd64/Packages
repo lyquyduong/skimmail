@@ -1,13 +1,13 @@
 Package: skimmail
-Version: 0.1.0
+Version: 0.1.1
 Architecture: amd64
 Maintainer: lyquyduong <noreply@users.noreply.github.com>
 Installed-Size: 14781
-Filename: pool/main/skimmail_0.1.0_amd64.deb
-Size: 7013526
-MD5sum: be68145b304935405c735ce1a07731b3
-SHA1: 23acbb14bbead9dcd22e8b923941eb64ae5e0f79
-SHA256: 83be561099d7ebf0fce48b48715e5c879e8a7479d2c8c8b038869d96d09a752b
+Filename: pool/main/skimmail_0.1.1_amd64.deb
+Size: 7012934
+MD5sum: 1ee19efc3fe60e5801b66f4a1aa8c855
+SHA1: a6f5c95c026dfc371d238cdb314c17778aabd5f1
+SHA256: 2a8a93077e450dd7b5bc13cfc0ec37701ed23f829b47435c7eef2af7b6ab72e6
 Section: mail
 Priority: optional
 Homepage: https://github.com/lyquyduong/skimmail
