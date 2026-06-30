@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SkimMail — 中文</title>
+<style>:root { color-scheme: light dark;
+  --fg:#1f2328; --muted:#59636e; --bg:#ffffff; --soft:#f6f8fa; --line:#d1d9e0; --link:#0969da; }
+@media (prefers-color-scheme: dark) {
+  :root { --fg:#e6edf3; --muted:#9198a1; --bg:#0d1117; --soft:#161b22; --line:#30363d; --link:#4493f8; } }
+* { box-sizing: border-box; }
+body { margin:0; background:var(--bg); color:var(--fg);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  line-height:1.6; -webkit-font-smoothing:antialiased; }
+main { max-width: 860px; margin: 0 auto; padding: 48px 24px 96px; }
+h1,h2,h3 { line-height:1.25; font-weight:700; letter-spacing:-0.01em; }
+h1 { font-size:2em; margin:0 0 .3em; }
+h2 { font-size:1.4em; margin:1.8em 0 .6em; padding-bottom:.3em; border-bottom:1px solid var(--line); }
+h3 { font-size:1.1em; margin:1.4em 0 .5em; }
+p, li { font-size:16px; }
+a { color:var(--link); text-decoration:none; } a:hover { text-decoration:underline; }
+hr { border:0; border-top:1px solid var(--line); margin:2em 0; }
+blockquote { margin:1em 0; padding:.2em 1em; color:var(--muted); border-left:3px solid var(--line); }
+code { font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+  font-size:.88em; background:var(--soft); padding:.15em .4em; border-radius:6px; }
+pre { background:var(--soft); border:1px solid var(--line); border-radius:8px; padding:14px 16px;
+  overflow-x:auto; } pre code { background:none; padding:0; font-size:13px; line-height:1.55; }
+table { border-collapse:collapse; width:100%; margin:1em 0; display:block; overflow-x:auto; }
+th,td { border:1px solid var(--line); padding:7px 12px; text-align:left; }
+th { background:var(--soft); font-weight:600; }
+ul,ol { padding-left:1.5em; }</style>
+</head>
+<body><main><h1>SkimMail</h1>
+<p><a href="index.html">English</a> · <a href="README.vi.html">Tiếng Việt</a> · <strong>中文</strong></p>
+<blockquote>
+<p>速览你的所有收件箱。一个轻量、自托管、<strong>以阅读为先</strong>的多账户邮件阅读器——以
+IMAP 为核心 + Gmail/Outlook OAuth——打包为<strong>单个 Go 二进制</strong>并内嵌 React SPA。
+<strong>无需任何外部服务</strong>。</p>
+</blockquote>
+<p><strong>许可证：</strong> AGPL-3.0-or-later（+ CLA，见 <a href="https://github.com/lyquyduong/skimmail/blob/main/CLA.md"><code>CLA.md</code></a>） · <strong>安全：</strong> <a href="https://github.com/lyquyduong/skimmail/blob/main/SECURITY.md"><code>SECURITY.md</code></a></p>
+<blockquote>
+<p><strong>这是 <code>0.1.0</code> 版本</strong> —— 专注的邮件阅读器 + 账户分组。其余能力（AI、通知、可插拔
+存储、应用内更新）已列入路线图。</p>
+</blockquote>
+<hr />
+<h2>功能</h2>
+<ul>
+<li><strong>多账户 IMAP</strong> 阅读——通过 host/port + 应用专用密码添加账户。</li>
+<li><strong>OAuth</strong> 支持 Gmail 与 Outlook（基于 IMAP 的 XOAUTH2）——<em>可选，需要你自己的
+  Google/Azure 应用凭据</em>。</li>
+<li>跨所有账户的<strong>统一收件箱</strong>、轻量<strong>会话线程（threading）</strong>、<strong>三栏界面</strong>，阅读
+  区在沙箱 iframe 中渲染（HTML 净化、默认拦截远程图片）。</li>
+<li><strong>账户分组</strong>——把多个账户归入有名称、带配色的分组，按组一起阅读邮件。</li>
+<li><strong>实时</strong>新邮件推送：IMAP <strong>IDLE → WebSocket</strong>，并带<strong>轮询兜底</strong>，即使 IDLE 断开
+  也能收到邮件——即便没有客户端打开，后端也会持续同步。</li>
+<li><strong>两级搜索</strong>——本地快速全文（SQLite FTS5）+ 可选<strong>服务端回退</strong>，触达缓存窗口之外
+  的邮件。</li>
+<li><strong>快速阅读</strong>工具——稍后处理（snooze）、置顶（pin）、分类收件箱 <strong>bundles</strong>、多选 +
+  批量操作、<strong>VIP / 静音</strong>发件人、一键<strong>退订</strong>（RFC 8058）。</li>
+<li><strong>键盘优先</strong>（Superhuman 风格）+ <strong>专注/处理模式</strong> + <strong>命令面板</strong>（⌘K）+ <strong>PWA</strong>
+  （可安装、外壳离线可用）+ <strong>多语言</strong>（English / Tiếng Việt / 中文，深色与浅色主题）。</li>
+<li><strong>常驻后台同步</strong>与<strong>安全</strong>层：登录限流 + 锁定、CSRF/Origin 校验、SSRF 防护、凭据
+  静态加密、以及审计日志。</li>
+</ul>
+<h2>环境要求</h2>
+<p>只需 <strong>Docker</strong> —— 内置 SQLite，无需任何外部服务。
+<em>（从源码构建或参与贡献？见 <a href="https://github.com/lyquyduong/skimmail/blob/main/README.dev.md"><code>README.dev.md</code></a>。）</em></p>
+<hr />
+<h2>快速开始</h2>
+<pre><code class="language-bash">docker compose up --build          # → http://localhost:8080（SQLite + 文件系统）
+</code></pre>
+<p>或运行纯镜像（distroless + 非 root；数据在 <code>/data</code> 卷）：</p>
+<pre><code class="language-bash">docker run -d -p 8080:8080 -v skimmail-data:/data \
+  -e AUTH_MODE=passphrase ghcr.io/lyquyduong/skimmail:latest
+</code></pre>
+<h3>在 Ubuntu / Debian 上安装（apt）</h3>
+<pre><code class="language-bash">curl -fsSL https://lyquyduong.github.io/skimmail/apt/skimmail.gpg \
+  | sudo tee /usr/share/keyrings/skimmail.gpg &gt;/dev/null
+echo &quot;deb [signed-by=/usr/share/keyrings/skimmail.gpg] https://lyquyduong.github.io/skimmail/apt stable main&quot; \
+  | sudo tee /etc/apt/sources.list.d/skimmail.list
+sudo apt update &amp;&amp; sudo apt install skimmail      # 作为 systemd 服务运行 → http://localhost:8080
+</code></pre>
+<p>配置位于 <code>/etc/default/skimmail</code>；升级通过 <code>apt upgrade</code>。所有发布渠道（镜像、<code>.deb</code>、
+apt 仓库）都从 GitHub 发布——见 <a href="https://github.com/lyquyduong/skimmail/blob/main/DISTRIBUTION.md"><code>DISTRIBUTION.md</code></a>。</p>
+<h3>首次登录</h3>
+<p>打开 <strong>http://localhost:8080</strong>。默认认证模式为 <code>passphrase</code>：<strong>你第一次输入的密码会
+成为主口令</strong> ——请牢记（之后用它登录）。用户名留空。</p>
+<h3>添加邮箱账户</h3>
+<p>添加 <strong>IMAP</strong> 账户：邮箱 · host（如 <code>imap.gmail.com</code>） · 端口 <code>993</code> · 安全 <code>TLS</code> ·
+<strong>应用专用密码</strong>。</p>
+<blockquote>
+<p>除非已配置 OAuth，否则 Gmail/Outlook 需要<strong>应用专用密码</strong>（不是常规密码）。要启用
+“使用 Google/Microsoft 添加”按钮，请配置下方的 OAuth 凭据并设置公开的 <code>BASE_URL</code>。</p>
+</blockquote>
+<p>点击 <strong>↻ Sync</strong>（或等待后台轮询）。之后新邮件会通过 WebSocket 实时推送。</p>
+<hr />
+<h2>使用</h2>
+<ul>
+<li><strong>搜索</strong>——在搜索框输入（回车）。选中单个账户时，<strong>“Search server ↗”</strong>按钮还会
+  查询邮件服务器并缓存命中结果。</li>
+<li><strong>分组</strong>——在 <strong>Settings → Groups</strong> 创建账户分组；选择某个分组即可只阅读该组账户
+  的邮件。</li>
+<li><strong>Bundles</strong>——按 Primary / Newsletter / Transactional / Notifications 过滤列表。
+  <strong>💤 Snoozed</strong> 查看已稍后处理的邮件。</li>
+<li><strong>多选</strong>——勾选行进行<strong>批量</strong> read / archive / delete。</li>
+<li><strong>阅读区</strong>——🗄 归档 · 🗑 删除（可 <strong>Undo</strong>） · 💤 稍后 · 📌 置顶 · ✉️ 退订 ·
+  ★ VIP · 🔇 静音。</li>
+<li><strong>键盘</strong>——<code>?</code> 显示全部快捷键：<code>j</code>/<code>k</code> 移动 · <code>Enter</code>/<code>o</code> 打开 · <code>e</code> 归档 ·
+  <code>#</code> 删除 · <code>s</code> 稍后 · <code>x</code> 选择 · <code>Space</code> 快速预览 · <code>/</code> 搜索 ·
+  <strong><code>f</code> 专注模式</strong>（“清空收件箱”） · <code>Esc</code> 关闭。</li>
+<li><strong>PWA</strong>——从浏览器地址栏安装；应用外壳可离线使用。</li>
+<li><strong>语言 / 主题</strong>——在侧栏切换 EN / VI / 中 与深色/浅色。</li>
+</ul>
+<hr />
+<h2>配置</h2>
+<p>通过环境变量配置（12-factor）。见 <a href="https://github.com/lyquyduong/skimmail/blob/main/.env.example"><code>.env.example</code></a>。</p>
+<table>
+<thead>
+<tr>
+<th>变量</th>
+<th>默认</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>AUTH_MODE</code></td>
+<td><code>passphrase</code></td>
+<td><code>passphrase</code>（单用户）或 <code>users</code>（多用户）</td>
+</tr>
+<tr>
+<td><code>DATA_DIR</code></td>
+<td><code>./data</code></td>
+<td>SQLite 数据库、主密钥、blobs</td>
+</tr>
+<tr>
+<td><code>LISTEN_ADDR</code></td>
+<td><code>:8080</code></td>
+<td>监听地址</td>
+</tr>
+<tr>
+<td><code>BASE_URL</code></td>
+<td>–</td>
+<td>公开 URL——OAuth 回调、WebSocket、PWA <strong>必需</strong></td>
+</tr>
+<tr>
+<td><code>TRUST_PROXY</code></td>
+<td><code>false</code></td>
+<td>反向代理后信任 <code>X-Forwarded-*</code></td>
+</tr>
+<tr>
+<td><code>TRUSTED_ORIGINS</code></td>
+<td>–</td>
+<td>额外允许的 CORS/CSRF 来源（逗号分隔）</td>
+</tr>
+<tr>
+<td><code>BACKGROUND_POLL_INTERVAL</code></td>
+<td><code>5m</code></td>
+<td>每个账户的轮询兜底周期</td>
+</tr>
+<tr>
+<td><code>MAX_CONCURRENT_SYNCS</code></td>
+<td><code>4</code></td>
+<td>同时同步的最大邮箱数</td>
+</tr>
+<tr>
+<td><code>SYNC_RATE_PER_MIN</code></td>
+<td><code>10</code></td>
+<td>每分钟启动同步的次数上限（错峰）</td>
+</tr>
+<tr>
+<td><code>SYNC_DEPTH_DAYS</code></td>
+<td><code>30</code></td>
+<td>邮件头同步窗口（0 = 全部历史）</td>
+</tr>
+<tr>
+<td><code>GOOGLE_CLIENT_ID</code> / <code>_SECRET</code></td>
+<td>–</td>
+<td>Gmail OAuth 应用（可选）</td>
+</tr>
+<tr>
+<td><code>MICROSOFT_CLIENT_ID</code> / <code>_SECRET</code></td>
+<td>–</td>
+<td>Outlook OAuth 应用（可选）</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>安全</h2>
+<p>凭据与 OAuth 令牌静态加密（AES-256-GCM）。服务端实施登录限流 + 锁定、CSRF/Origin
+校验、对外请求的 SSRF 防护、严格安全响应头 + 沙箱邮件 iframe，以及只追加的审计日志
+（<code>GET /api/audit</code>）。完整安全姿态与漏洞报告方式见 <a href="https://github.com/lyquyduong/skimmail/blob/main/SECURITY.md"><code>SECURITY.md</code></a>。</p>
+<h2>面向开发者</h2>
+<p>从源码构建、开发模式（热重载）、VS Code 配置、build tags、测试与项目结构都在
+<strong><a href="https://github.com/lyquyduong/skimmail/blob/main/README.dev.md"><code>README.dev.md</code></a></strong>。</p>
+<h2>许可证</h2>
+<p>AGPL-3.0-or-later。贡献需签署 <a href="https://github.com/lyquyduong/skimmail/blob/main/CLA.md">CLA</a>。SPDX：<code>AGPL-3.0-or-later</code>。</p></main></body>
+</html>

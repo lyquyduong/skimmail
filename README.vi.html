@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SkimMail — Tiếng Việt</title>
+<style>:root { color-scheme: light dark;
+  --fg:#1f2328; --muted:#59636e; --bg:#ffffff; --soft:#f6f8fa; --line:#d1d9e0; --link:#0969da; }
+@media (prefers-color-scheme: dark) {
+  :root { --fg:#e6edf3; --muted:#9198a1; --bg:#0d1117; --soft:#161b22; --line:#30363d; --link:#4493f8; } }
+* { box-sizing: border-box; }
+body { margin:0; background:var(--bg); color:var(--fg);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  line-height:1.6; -webkit-font-smoothing:antialiased; }
+main { max-width: 860px; margin: 0 auto; padding: 48px 24px 96px; }
+h1,h2,h3 { line-height:1.25; font-weight:700; letter-spacing:-0.01em; }
+h1 { font-size:2em; margin:0 0 .3em; }
+h2 { font-size:1.4em; margin:1.8em 0 .6em; padding-bottom:.3em; border-bottom:1px solid var(--line); }
+h3 { font-size:1.1em; margin:1.4em 0 .5em; }
+p, li { font-size:16px; }
+a { color:var(--link); text-decoration:none; } a:hover { text-decoration:underline; }
+hr { border:0; border-top:1px solid var(--line); margin:2em 0; }
+blockquote { margin:1em 0; padding:.2em 1em; color:var(--muted); border-left:3px solid var(--line); }
+code { font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+  font-size:.88em; background:var(--soft); padding:.15em .4em; border-radius:6px; }
+pre { background:var(--soft); border:1px solid var(--line); border-radius:8px; padding:14px 16px;
+  overflow-x:auto; } pre code { background:none; padding:0; font-size:13px; line-height:1.55; }
+table { border-collapse:collapse; width:100%; margin:1em 0; display:block; overflow-x:auto; }
+th,td { border:1px solid var(--line); padding:7px 12px; text-align:left; }
+th { background:var(--soft); font-weight:600; }
+ul,ol { padding-left:1.5em; }</style>
+</head>
+<body><main><h1>SkimMail</h1>
+<p><a href="index.html">English</a> · <strong>Tiếng Việt</strong> · <a href="README.zh.html">中文</a></p>
+<blockquote>
+<p>Lướt nhanh mọi hộp thư. Trình đọc email <strong>đọc-trước (read-first)</strong>, đa tài khoản,
+tự host, nhẹ — lõi IMAP + OAuth Gmail/Outlook — đóng gói thành <strong>một file binary
+Go duy nhất</strong> nhúng sẵn React SPA. <strong>Không cần dịch vụ ngoài</strong>.</p>
+</blockquote>
+<p><strong>Giấy phép:</strong> AGPL-3.0-or-later (+ CLA, xem <a href="https://github.com/lyquyduong/skimmail/blob/main/CLA.md"><code>CLA.md</code></a>) · <strong>Bảo mật:</strong> <a href="https://github.com/lyquyduong/skimmail/blob/main/SECURITY.md"><code>SECURITY.md</code></a></p>
+<blockquote>
+<p><strong>Đây là bản <code>0.1.0</code></strong> — trình đọc email tập trung + nhóm tài khoản. Các phần
+khác (AI, thông báo, lưu trữ cắm được, tự cập nhật trong app) nằm trong roadmap.</p>
+</blockquote>
+<hr />
+<h2>Tính năng</h2>
+<ul>
+<li><strong>Đọc IMAP đa tài khoản</strong> — thêm account bằng host/port + app-password.</li>
+<li><strong>OAuth</strong> cho Gmail &amp; Outlook (XOAUTH2 qua IMAP) — <em>tùy chọn, cần app credentials
+  Google/Azure của riêng bạn</em>.</li>
+<li><strong>Hộp thư hợp nhất</strong> xuyên mọi tài khoản, <strong>gom luồng (threading)</strong> nhẹ, <strong>giao
+  diện 3 khung</strong> với khung đọc cô lập (sanitize HTML, chặn ảnh từ xa).</li>
+<li><strong>Nhóm tài khoản</strong> — gom nhiều tài khoản vào các nhóm có tên + màu, đọc mail theo
+  từng nhóm.</li>
+<li><strong>Thời gian thực</strong>: mail mới đẩy qua IMAP <strong>IDLE → WebSocket</strong>, kèm <strong>poll dự
+  phòng</strong> để mail vẫn về nếu IDLE rớt — backend đồng bộ cả khi không có client mở.</li>
+<li><strong>Tìm kiếm 2 tầng</strong> — full-text cục bộ nhanh (SQLite FTS5) + tùy chọn <strong>fallback
+  phía server</strong> để tìm cả mail ngoài phạm vi đã cache.</li>
+<li><strong>Đọc nhanh</strong> — tạm ẩn (snooze), ghim (pin), <strong>bundles</strong> chia hộp thư, chọn nhiều</li>
+<li>thao tác hàng loạt, sender <strong>VIP / mute</strong>, <strong>hủy đăng ký 1 chạm</strong> (RFC 8058).</li>
+<li><strong>Bàn phím trước hết</strong> (kiểu Superhuman) + <strong>chế độ Focus/triage</strong> + <strong>command
+  palette</strong> (⌘K) + <strong>PWA</strong> (cài được, chạy offline phần vỏ) + <strong>đa ngôn ngữ</strong>
+  (English / Tiếng Việt / 中文, giao diện sáng &amp; tối).</li>
+<li><strong>Đồng bộ nền luôn-bật</strong> và lớp <strong>bảo mật</strong>: rate-limit + lockout đăng nhập, kiểm
+  tra CSRF/Origin, chống SSRF, mã hoá credential at-rest, và <strong>audit log</strong>.</li>
+</ul>
+<h2>Yêu cầu</h2>
+<p>Chỉ cần <strong>Docker</strong> — SQLite tích hợp sẵn, không cần dịch vụ ngoài.
+<em>(Build từ mã nguồn hoặc đóng góp? Xem <a href="https://github.com/lyquyduong/skimmail/blob/main/README.dev.md"><code>README.dev.md</code></a>.)</em></p>
+<hr />
+<h2>Bắt đầu nhanh</h2>
+<pre><code class="language-bash">docker compose up --build          # → http://localhost:8080  (SQLite + filesystem)
+</code></pre>
+<p>Hoặc chạy image thuần (distroless + non-root; dữ liệu ở volume <code>/data</code>):</p>
+<pre><code class="language-bash">docker run -d -p 8080:8080 -v skimmail-data:/data \
+  -e AUTH_MODE=passphrase ghcr.io/lyquyduong/skimmail:latest
+</code></pre>
+<h3>Cài trên Ubuntu / Debian (apt)</h3>
+<pre><code class="language-bash">curl -fsSL https://lyquyduong.github.io/skimmail/apt/skimmail.gpg \
+  | sudo tee /usr/share/keyrings/skimmail.gpg &gt;/dev/null
+echo &quot;deb [signed-by=/usr/share/keyrings/skimmail.gpg] https://lyquyduong.github.io/skimmail/apt stable main&quot; \
+  | sudo tee /etc/apt/sources.list.d/skimmail.list
+sudo apt update &amp;&amp; sudo apt install skimmail      # chạy như systemd service → http://localhost:8080
+</code></pre>
+<p>Cấu hình ở <code>/etc/default/skimmail</code>; nâng cấp qua <code>apt upgrade</code>. Mọi kênh phát hành
+(image, <code>.deb</code>, apt repo) đều ship từ GitHub — xem <a href="https://github.com/lyquyduong/skimmail/blob/main/DISTRIBUTION.md"><code>DISTRIBUTION.md</code></a>.</p>
+<h3>Đăng nhập lần đầu</h3>
+<p>Mở <strong>http://localhost:8080</strong>. Chế độ auth mặc định là <code>passphrase</code>: <strong>mật khẩu bạn
+nhập lần đầu tiên sẽ trở thành passphrase chính</strong> — hãy nhớ nó (dùng để đăng nhập
+lại). Để trống ô username.</p>
+<h3>Thêm tài khoản mail</h3>
+<p>Thêm tài khoản <strong>IMAP</strong>: email · host (vd <code>imap.gmail.com</code>) · port <code>993</code> · bảo mật
+<code>TLS</code> · <strong>app password</strong>.</p>
+<blockquote>
+<p>Gmail/Outlook yêu cầu <strong>app-password</strong> riêng (không phải mật khẩu thường) trừ khi
+đã cấu hình OAuth. Muốn bật nút "Thêm bằng Google/Microsoft", hãy đặt OAuth
+credentials bên dưới + <code>BASE_URL</code> công khai.</p>
+</blockquote>
+<p>Bấm <strong>↻ Sync</strong> (hoặc đợi poll nền). Sau đó mail mới đẩy về thời gian thực qua WebSocket.</p>
+<hr />
+<h2>Sử dụng</h2>
+<ul>
+<li><strong>Tìm kiếm</strong> — gõ vào ô search (Enter). Khi chọn 1 account, nút <strong>"Search server ↗"</strong>
+  còn tìm trên máy chủ mail và cache kết quả.</li>
+<li><strong>Nhóm</strong> — tạo nhóm tài khoản ở <strong>Settings → Groups</strong>; chọn 1 nhóm để chỉ đọc mail
+  của các tài khoản trong nhóm đó.</li>
+<li><strong>Bundles</strong> — lọc danh sách theo Primary / Newsletter / Transactional /
+  Notifications. <strong>💤 Snoozed</strong> xem mail đang tạm ẩn.</li>
+<li><strong>Chọn nhiều</strong> — tick các dòng để <strong>bulk</strong> read / archive / delete.</li>
+<li><strong>Khung đọc</strong> — 🗄 Archive · 🗑 Delete (có <strong>Undo</strong>) · 💤 Snooze · 📌 Pin ·
+  ✉️ Unsubscribe · ★ VIP · 🔇 Mute.</li>
+<li><strong>Bàn phím</strong> — <code>?</code> hiện toàn bộ phím tắt: <code>j</code>/<code>k</code> di chuyển · <code>Enter</code>/<code>o</code> mở ·
+  <code>e</code> archive · <code>#</code> delete · <code>s</code> snooze · <code>x</code> chọn · <code>Space</code> xem nhanh ·
+  <code>/</code> tìm kiếm · <strong><code>f</code> chế độ Focus</strong> ("Get to Zero") · <code>Esc</code> đóng.</li>
+<li><strong>PWA</strong> — cài từ thanh địa chỉ trình duyệt; phần vỏ app chạy offline.</li>
+<li><strong>Ngôn ngữ / giao diện</strong> — đổi EN / VI / 中 và sáng/tối ở sidebar.</li>
+</ul>
+<hr />
+<h2>Cấu hình</h2>
+<p>Cấu hình qua biến môi trường (12-factor). Xem <a href="https://github.com/lyquyduong/skimmail/blob/main/.env.example"><code>.env.example</code></a>.</p>
+<table>
+<thead>
+<tr>
+<th>Biến</th>
+<th>Mặc định</th>
+<th>Mục đích</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>AUTH_MODE</code></td>
+<td><code>passphrase</code></td>
+<td><code>passphrase</code> (1 user) hoặc <code>users</code> (đa user)</td>
+</tr>
+<tr>
+<td><code>DATA_DIR</code></td>
+<td><code>./data</code></td>
+<td>SQLite DB, master key, blobs</td>
+</tr>
+<tr>
+<td><code>LISTEN_ADDR</code></td>
+<td><code>:8080</code></td>
+<td>địa chỉ lắng nghe</td>
+</tr>
+<tr>
+<td><code>BASE_URL</code></td>
+<td>–</td>
+<td>URL công khai — <strong>bắt buộc</strong> cho OAuth redirect, WebSocket, PWA</td>
+</tr>
+<tr>
+<td><code>TRUST_PROXY</code></td>
+<td><code>false</code></td>
+<td>tin <code>X-Forwarded-*</code> sau reverse proxy</td>
+</tr>
+<tr>
+<td><code>TRUSTED_ORIGINS</code></td>
+<td>–</td>
+<td>origin được phép thêm cho CORS/CSRF (phân tách dấu phẩy)</td>
+</tr>
+<tr>
+<td><code>BACKGROUND_POLL_INTERVAL</code></td>
+<td><code>5m</code></td>
+<td>chu kỳ poll dự phòng cho mọi account</td>
+</tr>
+<tr>
+<td><code>MAX_CONCURRENT_SYNCS</code></td>
+<td><code>4</code></td>
+<td>số mailbox đồng bộ cùng lúc tối đa</td>
+</tr>
+<tr>
+<td><code>SYNC_RATE_PER_MIN</code></td>
+<td><code>10</code></td>
+<td>số lượt sync khởi động mỗi phút (stagger)</td>
+</tr>
+<tr>
+<td><code>SYNC_DEPTH_DAYS</code></td>
+<td><code>30</code></td>
+<td>cửa sổ sync header (0 = toàn bộ lịch sử)</td>
+</tr>
+<tr>
+<td><code>GOOGLE_CLIENT_ID</code> / <code>_SECRET</code></td>
+<td>–</td>
+<td>OAuth app Gmail (tùy chọn)</td>
+</tr>
+<tr>
+<td><code>MICROSOFT_CLIENT_ID</code> / <code>_SECRET</code></td>
+<td>–</td>
+<td>OAuth app Outlook (tùy chọn)</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>Bảo mật</h2>
+<p>Credential và token OAuth được mã hoá at-rest (AES-256-GCM). Server áp rate-limit +
+lockout đăng nhập, kiểm tra CSRF/Origin, chống SSRF cho fetch ra ngoài, security
+headers nghiêm ngặt + iframe email cô lập, và audit log append-only
+(<code>GET /api/audit</code>). Xem <a href="https://github.com/lyquyduong/skimmail/blob/main/SECURITY.md"><code>SECURITY.md</code></a> để biết tư thế bảo mật đầy đủ
+và cách báo lỗ hổng.</p>
+<h2>Cho lập trình viên</h2>
+<p>Build từ mã nguồn, chế độ dev (hot reload), thiết lập VS Code, build tags, tests và
+bố cục dự án nằm ở <strong><a href="https://github.com/lyquyduong/skimmail/blob/main/README.dev.md"><code>README.dev.md</code></a></strong>.</p>
+<h2>Giấy phép</h2>
+<p>AGPL-3.0-or-later. Đóng góp cần ký <a href="https://github.com/lyquyduong/skimmail/blob/main/CLA.md">CLA</a>. SPDX: <code>AGPL-3.0-or-later</code>.</p></main></body>
+</html>

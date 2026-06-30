@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SkimMail</title>
+<style>:root { color-scheme: light dark;
+  --fg:#1f2328; --muted:#59636e; --bg:#ffffff; --soft:#f6f8fa; --line:#d1d9e0; --link:#0969da; }
+@media (prefers-color-scheme: dark) {
+  :root { --fg:#e6edf3; --muted:#9198a1; --bg:#0d1117; --soft:#161b22; --line:#30363d; --link:#4493f8; } }
+* { box-sizing: border-box; }
+body { margin:0; background:var(--bg); color:var(--fg);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  line-height:1.6; -webkit-font-smoothing:antialiased; }
+main { max-width: 860px; margin: 0 auto; padding: 48px 24px 96px; }
+h1,h2,h3 { line-height:1.25; font-weight:700; letter-spacing:-0.01em; }
+h1 { font-size:2em; margin:0 0 .3em; }
+h2 { font-size:1.4em; margin:1.8em 0 .6em; padding-bottom:.3em; border-bottom:1px solid var(--line); }
+h3 { font-size:1.1em; margin:1.4em 0 .5em; }
+p, li { font-size:16px; }
+a { color:var(--link); text-decoration:none; } a:hover { text-decoration:underline; }
+hr { border:0; border-top:1px solid var(--line); margin:2em 0; }
+blockquote { margin:1em 0; padding:.2em 1em; color:var(--muted); border-left:3px solid var(--line); }
+code { font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+  font-size:.88em; background:var(--soft); padding:.15em .4em; border-radius:6px; }
+pre { background:var(--soft); border:1px solid var(--line); border-radius:8px; padding:14px 16px;
+  overflow-x:auto; } pre code { background:none; padding:0; font-size:13px; line-height:1.55; }
+table { border-collapse:collapse; width:100%; margin:1em 0; display:block; overflow-x:auto; }
+th,td { border:1px solid var(--line); padding:7px 12px; text-align:left; }
+th { background:var(--soft); font-weight:600; }
+ul,ol { padding-left:1.5em; }</style>
+</head>
+<body><main><h1>SkimMail</h1>
+<p><strong>English</strong> · <a href="README.vi.html">Tiếng Việt</a> · <a href="README.zh.html">中文</a></p>
+<blockquote>
+<p>Skim all your inboxes. A lightweight, self-hosted, <strong>read-first</strong> multi-account
+email reader — IMAP core + Gmail/Outlook OAuth — packaged as a <strong>single Go
+binary</strong> that embeds a React SPA. No external services required.</p>
+</blockquote>
+<p><strong>License:</strong> AGPL-3.0-or-later (+ CLA, see <a href="https://github.com/lyquyduong/skimmail/blob/main/CLA.md"><code>CLA.md</code></a>) · <strong>Security:</strong> <a href="https://github.com/lyquyduong/skimmail/blob/main/SECURITY.md"><code>SECURITY.md</code></a></p>
+<blockquote>
+<p><strong>This is the <code>0.1.0</code> release</strong> — a focused email reader plus account groups.
+More (AI, notifications, pluggable storage, in-app updates) is on the roadmap.</p>
+</blockquote>
+<hr />
+<h2>Features</h2>
+<ul>
+<li><strong>Multi-account IMAP</strong> read — add accounts with host/port + app-password.</li>
+<li><strong>OAuth</strong> for Gmail &amp; Outlook (XOAUTH2 over IMAP) — <em>optional, needs your own
+  Google/Azure app credentials</em>.</li>
+<li><strong>Unified inbox</strong> across all accounts, lightweight <strong>threading</strong>, <strong>3-pane UI</strong>
+  with a sandboxed reading pane (HTML sanitized, remote images blocked).</li>
+<li><strong>Account groups</strong> — organize your accounts into named, colour-coded groups and
+  read each group's mail together.</li>
+<li><strong>Real-time</strong> new-mail push via IMAP <strong>IDLE → WebSocket</strong>, with a poll-fallback
+  so mail still arrives if IDLE drops — the backend syncs even when no client is open.</li>
+<li><strong>Search, 2-tier</strong> — fast local full-text (SQLite FTS5) + optional server-side
+  fallback to reach mail outside the cached window.</li>
+<li><strong>Read-fast</strong> power tools — snooze, pin, split-inbox <strong>bundles</strong>, multi-select +
+  bulk actions, VIP / mute senders, one-click <strong>unsubscribe</strong> (RFC 8058).</li>
+<li><strong>Keyboard-first</strong> (Superhuman-style) + <strong>Focus/triage mode</strong> + <strong>command palette</strong>
+  (⌘K) + <strong>PWA</strong> (installable, offline shell) + <strong>i18n</strong> (English / Tiếng Việt /
+  中文, dark &amp; light themes).</li>
+<li><strong>Always-on background sync</strong> and a <strong>security</strong> layer: login rate-limit +
+  lockout, CSRF/origin checks, SSRF guard, encrypted credentials at rest, and an
+  audit log.</li>
+</ul>
+<h2>Requirements</h2>
+<p>Just <strong>Docker</strong> — SQLite is built in, no external services needed.
+<em>(Building from source or contributing? See <a href="https://github.com/lyquyduong/skimmail/blob/main/README.dev.md"><code>README.dev.md</code></a>.)</em></p>
+<hr />
+<h2>Quick start</h2>
+<pre><code class="language-bash">docker compose up --build          # → http://localhost:8080  (SQLite + filesystem)
+</code></pre>
+<p>Or run the published image (distroless + non-root; data in the <code>/data</code> volume):</p>
+<pre><code class="language-bash">docker run -d -p 8080:8080 -v skimmail-data:/data \
+  -e AUTH_MODE=passphrase ghcr.io/lyquyduong/skimmail:latest
+</code></pre>
+<h3>Install on Ubuntu / Debian (apt)</h3>
+<pre><code class="language-bash">curl -fsSL https://lyquyduong.github.io/skimmail/apt/skimmail.gpg \
+  | sudo tee /usr/share/keyrings/skimmail.gpg &gt;/dev/null
+echo &quot;deb [signed-by=/usr/share/keyrings/skimmail.gpg] https://lyquyduong.github.io/skimmail/apt stable main&quot; \
+  | sudo tee /etc/apt/sources.list.d/skimmail.list
+sudo apt update &amp;&amp; sudo apt install skimmail      # runs as a systemd service → http://localhost:8080
+</code></pre>
+<p>Config lives in <code>/etc/default/skimmail</code>; upgrades come via <code>apt upgrade</code>. All
+release channels (image, <code>.deb</code>, apt repo) ship from GitHub — see
+<a href="https://github.com/lyquyduong/skimmail/blob/main/DISTRIBUTION.md"><code>DISTRIBUTION.md</code></a>.</p>
+<h3>First login</h3>
+<p>Open <strong>http://localhost:8080</strong>. The default auth mode is <code>passphrase</code>: <strong>the first
+password you enter becomes your master passphrase</strong> — remember it (it's used to
+log in again). Leave the username blank.</p>
+<h3>Add a mail account</h3>
+<p>Add an <strong>IMAP</strong> account: email · host (e.g. <code>imap.gmail.com</code>) · port <code>993</code> ·
+security <code>TLS</code> · <strong>app password</strong>.</p>
+<blockquote>
+<p>Gmail/Outlook require an <strong>app-specific password</strong> (not your normal password)
+unless OAuth is configured. To enable the "Add with Google/Microsoft" buttons,
+set the OAuth credentials below and a public <code>BASE_URL</code>.</p>
+</blockquote>
+<p>Press <strong>↻ Sync</strong> (or wait for the background poll). New mail then pushes in
+real-time over WebSocket.</p>
+<hr />
+<h2>Usage</h2>
+<ul>
+<li><strong>Search</strong> — type in the search box (Enter). With a single account selected, the
+  <strong>"Search server ↗"</strong> button also queries the mail server and caches the hits.</li>
+<li><strong>Groups</strong> — create account groups in <strong>Settings → Groups</strong>; pick a group to
+  read just those accounts' mail.</li>
+<li><strong>Bundles</strong> — filter the list by Primary / Newsletter / Transactional /
+  Notifications. <strong>💤 Snoozed</strong> shows snoozed mail.</li>
+<li><strong>Multi-select</strong> — tick rows for <strong>bulk</strong> read / archive / delete.</li>
+<li><strong>Reading pane</strong> — 🗄 Archive · 🗑 Delete (with <strong>Undo</strong>) · 💤 Snooze · 📌 Pin ·
+  ✉️ Unsubscribe · ★ VIP · 🔇 Mute.</li>
+<li><strong>Keyboard</strong> — <code>?</code> shows all shortcuts: <code>j</code>/<code>k</code> move · <code>Enter</code>/<code>o</code> open ·
+  <code>e</code> archive · <code>#</code> delete · <code>s</code> snooze · <code>x</code> select · <code>Space</code> quick-peek ·
+  <code>/</code> search · <strong><code>f</code> Focus mode</strong> ("Get to Zero") · <code>Esc</code> close.</li>
+<li><strong>PWA</strong> — install from the browser address bar; the app shell works offline.</li>
+<li><strong>Language / theme</strong> — switch EN / VI / 中 and dark/light in the sidebar.</li>
+</ul>
+<hr />
+<h2>Configuration</h2>
+<p>Config is via environment variables (12-factor). See <a href="https://github.com/lyquyduong/skimmail/blob/main/.env.example"><code>.env.example</code></a>.</p>
+<table>
+<thead>
+<tr>
+<th>Variable</th>
+<th>Default</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>AUTH_MODE</code></td>
+<td><code>passphrase</code></td>
+<td><code>passphrase</code> (single-user) or <code>users</code> (multi-user)</td>
+</tr>
+<tr>
+<td><code>DATA_DIR</code></td>
+<td><code>./data</code></td>
+<td>SQLite DB, master key, blobs</td>
+</tr>
+<tr>
+<td><code>LISTEN_ADDR</code></td>
+<td><code>:8080</code></td>
+<td>listen address</td>
+</tr>
+<tr>
+<td><code>BASE_URL</code></td>
+<td>–</td>
+<td>public URL — <strong>required</strong> for OAuth redirect, WebSocket, PWA</td>
+</tr>
+<tr>
+<td><code>TRUST_PROXY</code></td>
+<td><code>false</code></td>
+<td>trust <code>X-Forwarded-*</code> behind a reverse proxy</td>
+</tr>
+<tr>
+<td><code>TRUSTED_ORIGINS</code></td>
+<td>–</td>
+<td>extra CORS/CSRF-allowed origins (comma-separated)</td>
+</tr>
+<tr>
+<td><code>BACKGROUND_POLL_INTERVAL</code></td>
+<td><code>5m</code></td>
+<td>poll-fallback period for every account</td>
+</tr>
+<tr>
+<td><code>MAX_CONCURRENT_SYNCS</code></td>
+<td><code>4</code></td>
+<td>max mailboxes syncing at once</td>
+</tr>
+<tr>
+<td><code>SYNC_RATE_PER_MIN</code></td>
+<td><code>10</code></td>
+<td>max sync starts per minute (stagger)</td>
+</tr>
+<tr>
+<td><code>SYNC_DEPTH_DAYS</code></td>
+<td><code>30</code></td>
+<td>header sync window (0 = full history)</td>
+</tr>
+<tr>
+<td><code>GOOGLE_CLIENT_ID</code> / <code>_SECRET</code></td>
+<td>–</td>
+<td>Gmail OAuth app (optional)</td>
+</tr>
+<tr>
+<td><code>MICROSOFT_CLIENT_ID</code> / <code>_SECRET</code></td>
+<td>–</td>
+<td>Outlook OAuth app (optional)</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>Security</h2>
+<p>Credentials and OAuth tokens are encrypted at rest (AES-256-GCM). The server
+applies login rate-limiting + lockout, CSRF/origin checks, an SSRF guard on
+outbound fetches, strict security headers + a sandboxed email iframe, and an
+append-only audit log (<code>GET /api/audit</code>). See <a href="https://github.com/lyquyduong/skimmail/blob/main/SECURITY.md"><code>SECURITY.md</code></a> for the
+full posture and how to report a vulnerability.</p>
+<h2>Developers</h2>
+<p>Building from source, dev mode (hot reload), VS Code setup, build tags, tests, and
+project layout are in <strong><a href="https://github.com/lyquyduong/skimmail/blob/main/README.dev.md"><code>README.dev.md</code></a></strong>.</p>
+<h2>License</h2>
+<p>AGPL-3.0-or-later. Contributions require the <a href="https://github.com/lyquyduong/skimmail/blob/main/CLA.md">CLA</a>. SPDX: <code>AGPL-3.0-or-later</code>.</p></main></body>
+</html>
