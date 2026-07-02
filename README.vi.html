@@ -75,12 +75,19 @@ khác (AI, thông báo, lưu trữ cắm được, tự cập nhật trong app) 
 <pre><code class="language-bash">docker run -d -p 8080:8080 -v skimmail-data:/data \
   -e AUTH_MODE=passphrase ghcr.io/lyquyduong/skimmail:latest
 </code></pre>
+<p><strong>Hai bản:</strong> <code>skimmail</code> là bản gọn mặc định. Nếu cần <strong>WireGuard egress nhúng</strong>
+(định tuyến một tài khoản qua tunnel WireGuard ngay trong app, §21), dùng bản
+<strong><code>skimmail-wg</code></strong> — giống hệt, chỉ khác hậu tố <code>-wg</code>:</p>
+<pre><code class="language-bash">docker run -d -p 8080:8080 -v skimmail-data:/data \
+  -e AUTH_MODE=passphrase ghcr.io/lyquyduong/skimmail-wg:latest
+</code></pre>
 <h3>Cài trên Ubuntu / Debian (apt)</h3>
 <pre><code class="language-bash">curl -fsSL https://lyquyduong.github.io/skimmail/apt/skimmail.gpg \
   | sudo tee /usr/share/keyrings/skimmail.gpg &gt;/dev/null
 echo &quot;deb [signed-by=/usr/share/keyrings/skimmail.gpg] https://lyquyduong.github.io/skimmail/apt stable main&quot; \
   | sudo tee /etc/apt/sources.list.d/skimmail.list
 sudo apt update &amp;&amp; sudo apt install skimmail      # chạy như systemd service → http://localhost:8080
+#                          … hoặc:  sudo apt install skimmail-wg   # bản WireGuard nhúng (§21)
 </code></pre>
 <p>Cấu hình ở <code>/etc/default/skimmail</code>; nâng cấp qua <code>apt upgrade</code>. Mọi kênh phát hành
 (image, <code>.deb</code>, apt repo) đều ship từ GitHub — xem <a href="https://github.com/lyquyduong/skimmail/blob/main/DISTRIBUTION.md"><code>DISTRIBUTION.md</code></a>.</p>

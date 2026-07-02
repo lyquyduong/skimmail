@@ -4,6 +4,11 @@
 #     docker compose up --build
 #     → http://localhost:8080   (first login sets your master passphrase)
 #
+#   SkimMailWG (embedded WireGuard egress, §21):
+#     docker compose --profile wireguard up --build
+#     → http://localhost:8082
+#   Or pull the prebuilt image:  docker run ghcr.io/lyquyduong/skimmail-wg:latest
+#
 #   Advanced (stateless stack — Postgres + S3/MinIO, §23):
 #     docker compose --profile advanced up --build
 #     → skimmail:        http://localhost:8081
@@ -30,6 +35,28 @@ services:
     restart: unless-stopped
     # No healthcheck: the distroless image has no shell/curl. Use /healthz from
     # the host: curl http://localhost:8080/healthz
+
+  # ---- WireGuard edition (SkimMailWG): same image built with -tags wireguard ----
+  # Enables the embedded userspace WireGuard egress (§21). Kept behind a profile so
+  # the default `docker compose up` stays lean (no gVisor netstack).
+  skimmail-wg:
+    profiles: ["wireguard"]
+    build:
+      context: .
+      args:
+        TAGS: "wireguard"
+        VARIANT: "wireguard"
+    image: skimmail:wireguard
+    ports:
+      - "8082:8080"
+    environment:
+      AUTH_MODE: passphrase
+      BASE_URL: http://localhost:8082
+      DATA_DIR: /data
+      BACKGROUND_POLL_INTERVAL: 2m
+    volumes:
+      - skimmail-wg-data:/data
+    restart: unless-stopped
 
   # ---- Advanced profile: Postgres + MinIO + skimmail built with -tags ----
   postgres:
@@ -106,6 +133,7 @@ services:
 
 volumes:
   skimmail-data:
+  skimmail-wg-data:
   skimmail-adv-data:
   pg-data:
   minio-data:
