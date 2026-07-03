@@ -69,7 +69,10 @@ khác (AI, thông báo, lưu trữ cắm được, tự cập nhật trong app) 
 <em>(Build từ mã nguồn hoặc đóng góp? Xem <a href="https://github.com/lyquyduong/skimmail/blob/main/README.dev.md"><code>README.dev.md</code></a>.)</em></p>
 <hr />
 <h2>Bắt đầu nhanh</h2>
-<pre><code class="language-bash">docker compose up --build          # → http://localhost:8080  (SQLite + filesystem)
+<p>Không cần mã nguồn — tải file compose đã publish (nó pull sẵn image dựng sẵn):</p>
+<pre><code class="language-bash">curl -fsSLO https://lyquyduong.github.io/skimmail/docker-compose.yml
+docker compose up -d                       # → http://localhost:8080  (SQLite + filesystem)
+# docker compose --profile wireguard up -d # bản SkimMailWG → http://localhost:8082
 </code></pre>
 <p>Hoặc chạy image thuần (distroless + non-root; dữ liệu ở volume <code>/data</code>):</p>
 <pre><code class="language-bash">docker run -d -p 8080:8080 -v skimmail-data:/data \

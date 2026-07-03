@@ -1,139 +1,53 @@
-# SkimMail — local develop / test stack.
+# SkimMail — end-user Docker Compose. Pulls prebuilt images from GHCR; no
+# source or build step needed. This file is published with every release at:
+#   https://lyquyduong.github.io/skimmail/docker-compose.yml
+#   (also attached to each GitHub Release)
 #
-#   Lightweight (default, SQLite + filesystem):
-#     docker compose up --build
-#     → http://localhost:8080   (first login sets your master passphrase)
+# Quick start:
+#   curl -fsSLO https://lyquyduong.github.io/skimmail/docker-compose.yml
+#   docker compose up -d                        # SkimMail       → http://localhost:8080
+#   docker compose --profile wireguard up -d    # SkimMailWG     → http://localhost:8082
 #
-#   SkimMailWG (embedded WireGuard egress, §21):
-#     docker compose --profile wireguard up --build
-#     → http://localhost:8082
-#   Or pull the prebuilt image:  docker run ghcr.io/lyquyduong/skimmail-wg:latest
+# Pick ONE edition (they're the same app):
+#   • skimmail     — lean default
+#   • skimmail-wg  — adds embedded userspace WireGuard egress (§21). Only needed
+#     for in-app ("embedded") tunnels; OS-mode WireGuard (bind to a host wg
+#     interface) works in the plain edition too.
 #
-#   Advanced (stateless stack — Postgres + S3/MinIO, §23):
-#     docker compose --profile advanced up --build
-#     → skimmail:        http://localhost:8081
-#     → MinIO console:   http://localhost:9001  (minioadmin / minioadmin)
+# Pin a version instead of latest:  SKIMMAIL_VERSION=v1.0.0 docker compose up -d
 #
-#   Stop + wipe data:  docker compose --profile advanced down -v
+# First visit sets your master passphrase. Data lives in the named volume.
+# Health: the image is distroless (no shell), so check from the host:
+#   curl http://localhost:8080/healthz
 name: skimmail
 
 services:
-  # ---- Default: lean single-binary (SQLite + local filesystem blobs) ----
   skimmail:
-    build:
-      context: .
-    image: skimmail:local
+    image: ghcr.io/lyquyduong/skimmail:${SKIMMAIL_VERSION:-latest}
     ports:
       - "8080:8080"
     environment:
       AUTH_MODE: passphrase
-      BASE_URL: http://localhost:8080
+      BASE_URL: http://localhost:8080   # set to your public URL behind a reverse proxy
       DATA_DIR: /data
-      BACKGROUND_POLL_INTERVAL: 2m   # snappier feedback while testing
     volumes:
       - skimmail-data:/data
     restart: unless-stopped
-    # No healthcheck: the distroless image has no shell/curl. Use /healthz from
-    # the host: curl http://localhost:8080/healthz
 
-  # ---- WireGuard edition (SkimMailWG): same image built with -tags wireguard ----
-  # Enables the embedded userspace WireGuard egress (§21). Kept behind a profile so
-  # the default `docker compose up` stays lean (no gVisor netstack).
+  # SkimMailWG — embedded WireGuard egress edition. `--profile wireguard`.
   skimmail-wg:
     profiles: ["wireguard"]
-    build:
-      context: .
-      args:
-        TAGS: "wireguard"
-        VARIANT: "wireguard"
-    image: skimmail:wireguard
+    image: ghcr.io/lyquyduong/skimmail-wg:${SKIMMAIL_VERSION:-latest}
     ports:
       - "8082:8080"
     environment:
       AUTH_MODE: passphrase
       BASE_URL: http://localhost:8082
       DATA_DIR: /data
-      BACKGROUND_POLL_INTERVAL: 2m
     volumes:
       - skimmail-wg-data:/data
-    restart: unless-stopped
-
-  # ---- Advanced profile: Postgres + MinIO + skimmail built with -tags ----
-  postgres:
-    profiles: ["advanced"]
-    image: postgres:16-alpine
-    environment:
-      POSTGRES_USER: skim
-      POSTGRES_PASSWORD: skim
-      POSTGRES_DB: skimmail
-    ports:
-      - "5432:5432"   # exposed so a host-run backend (e.g. VS Code debug) can connect
-    volumes:
-      - pg-data:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U skim -d skimmail"]
-      interval: 5s
-      timeout: 3s
-      retries: 12
-
-  minio:
-    profiles: ["advanced"]
-    image: minio/minio
-    command: server /data --console-address ":9001"
-    environment:
-      MINIO_ROOT_USER: minioadmin
-      MINIO_ROOT_PASSWORD: minioadmin
-    ports:
-      - "9001:9001"   # web console
-    volumes:
-      - minio-data:/data
-
-  # one-shot: wait for MinIO, then create the bucket
-  createbuckets:
-    profiles: ["advanced"]
-    image: minio/mc
-    depends_on:
-      - minio
-    entrypoint: >
-      /bin/sh -c "
-      until mc alias set local http://minio:9000 minioadmin minioadmin; do sleep 1; done;
-      mc mb -p local/skimmail;
-      exit 0"
-
-  skimmail-advanced:
-    profiles: ["advanced"]
-    build:
-      context: .
-      args:
-        TAGS: "postgres s3"   # swap to "mysql s3" + a mysql service for MySQL
-    image: skimmail:advanced
-    ports:
-      - "8081:8080"
-    environment:
-      AUTH_MODE: passphrase
-      BASE_URL: http://localhost:8081
-      DATA_DIR: /data
-      DB_DRIVER: postgres
-      DATABASE_URL: postgres://skim:skim@postgres:5432/skimmail?sslmode=disable
-      BLOB_STORE: s3
-      S3_ENDPOINT: http://minio:9000
-      S3_BUCKET: skimmail
-      S3_REGION: us-east-1
-      S3_ACCESS_KEY: minioadmin
-      S3_SECRET_KEY: minioadmin
-      S3_FORCE_PATH_STYLE: "true"
-    depends_on:
-      postgres:
-        condition: service_healthy
-      createbuckets:
-        condition: service_completed_successfully
-    volumes:
-      - skimmail-adv-data:/data
     restart: unless-stopped
 
 volumes:
   skimmail-data:
   skimmail-wg-data:
-  skimmail-adv-data:
-  pg-data:
-  minio-data:

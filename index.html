@@ -70,9 +70,12 @@ More (AI, notifications, pluggable storage, in-app updates) is on the roadmap.</
 <em>(Building from source or contributing? See <a href="https://github.com/lyquyduong/skimmail/blob/main/README.dev.md"><code>README.dev.md</code></a>.)</em></p>
 <hr />
 <h2>Quick start</h2>
-<pre><code class="language-bash">docker compose up --build          # → http://localhost:8080  (SQLite + filesystem)
+<p>No source needed — grab the published compose file (it pulls the prebuilt image):</p>
+<pre><code class="language-bash">curl -fsSLO https://lyquyduong.github.io/skimmail/docker-compose.yml
+docker compose up -d                       # → http://localhost:8080  (SQLite + filesystem)
+# docker compose --profile wireguard up -d # SkimMailWG edition → http://localhost:8082
 </code></pre>
-<p>Or run the published image (distroless + non-root; data in the <code>/data</code> volume):</p>
+<p>Or run the published image directly (distroless + non-root; data in the <code>/data</code> volume):</p>
 <pre><code class="language-bash">docker run -d -p 8080:8080 -v skimmail-data:/data \
   -e AUTH_MODE=passphrase ghcr.io/lyquyduong/skimmail:latest
 </code></pre>

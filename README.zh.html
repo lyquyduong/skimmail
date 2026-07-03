@@ -67,7 +67,10 @@ IMAP 为核心 + Gmail/Outlook OAuth——打包为<strong>单个 Go 二进制</
 <em>（从源码构建或参与贡献？见 <a href="https://github.com/lyquyduong/skimmail/blob/main/README.dev.md"><code>README.dev.md</code></a>。）</em></p>
 <hr />
 <h2>快速开始</h2>
-<pre><code class="language-bash">docker compose up --build          # → http://localhost:8080（SQLite + 文件系统）
+<p>无需源码 — 下载已发布的 compose 文件（它直接拉取预构建镜像）：</p>
+<pre><code class="language-bash">curl -fsSLO https://lyquyduong.github.io/skimmail/docker-compose.yml
+docker compose up -d                       # → http://localhost:8080（SQLite + 文件系统）
+# docker compose --profile wireguard up -d # SkimMailWG 版 → http://localhost:8082
 </code></pre>
 <p>或运行纯镜像（distroless + 非 root；数据在 <code>/data</code> 卷）：</p>
 <pre><code class="language-bash">docker run -d -p 8080:8080 -v skimmail-data:/data \
