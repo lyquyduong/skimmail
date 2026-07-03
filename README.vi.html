@@ -92,7 +92,10 @@ echo &quot;deb [signed-by=/usr/share/keyrings/skimmail.gpg] https://lyquyduong.g
 sudo apt update &amp;&amp; sudo apt install skimmail      # chạy như systemd service → http://localhost:8080
 #                          … hoặc:  sudo apt install skimmail-wg   # bản WireGuard nhúng (§21)
 </code></pre>
-<p>Cấu hình ở <code>/etc/default/skimmail</code>; nâng cấp qua <code>apt upgrade</code>. Mọi kênh phát hành
+<p>Cấu hình ở <code>/etc/default/skimmail</code>; dữ liệu ở <code>/var/lib/skimmail</code>; <strong>log</strong> nằm trong
+systemd journal (<code>sudo journalctl -u skimmail -f</code>) <strong>và</strong> file xoay vòng tại
+<code>/var/log/skimmail/skimmail.log</code> — level, xoay vòng, truncate và <strong>trình xem
+realtime</strong> nằm ở <strong>Settings ▸ Logs</strong>. Nâng cấp qua <code>apt upgrade</code>. Mọi kênh phát hành
 (image, <code>.deb</code>, apt repo) đều ship từ GitHub — xem <a href="https://github.com/lyquyduong/skimmail/blob/main/DISTRIBUTION.md"><code>DISTRIBUTION.md</code></a>.</p>
 <h3>Đăng nhập lần đầu</h3>
 <p>Mở <strong>http://localhost:8080</strong>. Chế độ auth mặc định là <code>passphrase</code>: <strong>mật khẩu bạn
@@ -206,6 +209,34 @@ lockout đăng nhập, kiểm tra CSRF/Origin, chống SSRF cho fetch ra ngoài,
 headers nghiêm ngặt + iframe email cô lập, và audit log append-only
 (<code>GET /api/audit</code>). Xem <a href="https://github.com/lyquyduong/skimmail/blob/main/SECURITY.md"><code>SECURITY.md</code></a> để biết tư thế bảo mật đầy đủ
 và cách báo lỗ hổng.</p>
+<h2>Gỡ cài đặt (xoá hoàn toàn)</h2>
+<p>Bản thân việc gỡ cài đặt không xoá dữ liệu — tài khoản, cache mail và <strong>master
+key</strong> mã hoá nằm trong Docker volume hoặc <code>/var/lib/skimmail</code>. Các bước đánh dấu
+⚠ bên dưới xoá chúng <strong>vĩnh viễn</strong> (không khôi phục được nếu không có backup).
+Lệnh dùng chung cho cả hai bản (<code>skimmail</code> / <code>skimmail-wg</code>).</p>
+<p><strong>Docker Compose</strong></p>
+<pre><code class="language-bash">docker compose down -v            # ⚠ dừng + xoá container VÀ volume dữ liệu
+# Bản WG:  docker compose --profile wireguard down -v
+docker rmi ghcr.io/lyquyduong/skimmail:latest ghcr.io/lyquyduong/skimmail-wg:latest 2&gt;/dev/null
+rm docker-compose.yml             # file compose đã tải về
+</code></pre>
+<p><strong>Docker (<code>docker run</code>)</strong></p>
+<pre><code class="language-bash">docker rm -f skimmail
+docker volume rm skimmail-data    # ⚠ toàn bộ dữ liệu
+docker rmi ghcr.io/lyquyduong/skimmail:latest     # hoặc …/skimmail-wg:latest
+</code></pre>
+<p><strong>APT (Ubuntu / Debian)</strong></p>
+<pre><code class="language-bash">sudo apt purge skimmail           # hoặc: skimmail-wg — dừng service, xoá binary,
+                                  # unit systemd và /etc/default/skimmail
+sudo rm -rf /var/lib/skimmail     # ⚠ dữ liệu — apt cố tình giữ lại
+sudo rm -rf /var/log/skimmail     # file log + các bản đã xoay
+sudo userdel skimmail             # system user được tạo lúc cài
+# gỡ repo APT + key đã thêm:
+sudo rm -f /etc/apt/sources.list.d/skimmail.list /usr/share/keyrings/skimmail.gpg
+sudo apt update
+</code></pre>
+<p><strong>Binary thủ công (tarball)</strong> — dừng tiến trình (hoặc unit systemd bạn tự tạo),
+rồi xoá binary và thư mục dữ liệu (<code>DATA_DIR</code>, mặc định <code>./data</code> cạnh binary).</p>
 <h2>Cho lập trình viên</h2>
 <p>Build từ mã nguồn, chế độ dev (hot reload), thiết lập VS Code, build tags, tests và
 bố cục dự án nằm ở <strong><a href="https://github.com/lyquyduong/skimmail/blob/main/README.dev.md"><code>README.dev.md</code></a></strong>.</p>

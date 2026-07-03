@@ -89,7 +89,10 @@ echo &quot;deb [signed-by=/usr/share/keyrings/skimmail.gpg] https://lyquyduong.g
 sudo apt update &amp;&amp; sudo apt install skimmail      # 作为 systemd 服务运行 → http://localhost:8080
 #                          … 或:  sudo apt install skimmail-wg   # 内嵌 WireGuard 版本（§21）
 </code></pre>
-<p>配置位于 <code>/etc/default/skimmail</code>；升级通过 <code>apt upgrade</code>。所有发布渠道（镜像、<code>.deb</code>、
+<p>配置位于 <code>/etc/default/skimmail</code>；数据位于 <code>/var/lib/skimmail</code>；<strong>日志</strong>写入 systemd
+journal（<code>sudo journalctl -u skimmail -f</code>）<strong>及</strong>轮转文件
+<code>/var/log/skimmail/skimmail.log</code> —— 级别、轮转、清空与<strong>实时查看器</strong>见
+<strong>Settings ▸ Logs</strong>。升级通过 <code>apt upgrade</code>。所有发布渠道（镜像、<code>.deb</code>、
 apt 仓库）都从 GitHub 发布——见 <a href="https://github.com/lyquyduong/skimmail/blob/main/DISTRIBUTION.md"><code>DISTRIBUTION.md</code></a>。</p>
 <h3>首次登录</h3>
 <p>打开 <strong>http://localhost:8080</strong>。默认认证模式为 <code>passphrase</code>：<strong>你第一次输入的密码会
@@ -199,6 +202,33 @@ apt 仓库）都从 GitHub 发布——见 <a href="https://github.com/lyquyduon
 <p>凭据与 OAuth 令牌静态加密（AES-256-GCM）。服务端实施登录限流 + 锁定、CSRF/Origin
 校验、对外请求的 SSRF 防护、严格安全响应头 + 沙箱邮件 iframe，以及只追加的审计日志
 （<code>GET /api/audit</code>）。完整安全姿态与漏洞报告方式见 <a href="https://github.com/lyquyduong/skimmail/blob/main/SECURITY.md"><code>SECURITY.md</code></a>。</p>
+<h2>卸载（完全移除）</h2>
+<p>卸载本身不会删除你的数据 —— 账户、邮件缓存和加密<strong>主密钥</strong>保存在 Docker 卷或
+<code>/var/lib/skimmail</code> 中。下面标 ⚠ 的步骤会<strong>永久</strong>删除它们（没有备份就无法恢复）。
+两个版本（<code>skimmail</code> / <code>skimmail-wg</code>）命令相同。</p>
+<p><strong>Docker Compose</strong></p>
+<pre><code class="language-bash">docker compose down -v            # ⚠ 停止并删除容器以及数据卷
+# WG 版:  docker compose --profile wireguard down -v
+docker rmi ghcr.io/lyquyduong/skimmail:latest ghcr.io/lyquyduong/skimmail-wg:latest 2&gt;/dev/null
+rm docker-compose.yml             # 之前下载的 compose 文件
+</code></pre>
+<p><strong>Docker（<code>docker run</code>）</strong></p>
+<pre><code class="language-bash">docker rm -f skimmail
+docker volume rm skimmail-data    # ⚠ 全部数据
+docker rmi ghcr.io/lyquyduong/skimmail:latest     # 或 …/skimmail-wg:latest
+</code></pre>
+<p><strong>APT（Ubuntu / Debian）</strong></p>
+<pre><code class="language-bash">sudo apt purge skimmail           # 或: skimmail-wg —— 停止服务，删除二进制、
+                                  # systemd unit 和 /etc/default/skimmail
+sudo rm -rf /var/lib/skimmail     # ⚠ 数据 —— apt 有意保留
+sudo rm -rf /var/log/skimmail     # 日志文件及轮转备份
+sudo userdel skimmail             # 安装时创建的系统用户
+# 移除之前添加的 APT 仓库 + 签名密钥:
+sudo rm -f /etc/apt/sources.list.d/skimmail.list /usr/share/keyrings/skimmail.gpg
+sudo apt update
+</code></pre>
+<p><strong>手动二进制（tarball）</strong> —— 停止进程（或你自建的 systemd unit），然后删除二进制
+及其数据目录（<code>DATA_DIR</code>，默认是二进制旁的 <code>./data</code>）。</p>
 <h2>面向开发者</h2>
 <p>从源码构建、开发模式（热重载）、VS Code 配置、build tags、测试与项目结构都在
 <strong><a href="https://github.com/lyquyduong/skimmail/blob/main/README.dev.md"><code>README.dev.md</code></a></strong>。</p>

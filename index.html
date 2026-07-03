@@ -93,7 +93,10 @@ echo &quot;deb [signed-by=/usr/share/keyrings/skimmail.gpg] https://lyquyduong.g
 sudo apt update &amp;&amp; sudo apt install skimmail      # runs as a systemd service → http://localhost:8080
 #                          … or:  sudo apt install skimmail-wg   # embedded WireGuard edition (§21)
 </code></pre>
-<p>Config lives in <code>/etc/default/skimmail</code>; upgrades come via <code>apt upgrade</code>. All
+<p>Config lives in <code>/etc/default/skimmail</code>; data in <code>/var/lib/skimmail</code>; <strong>logs</strong> go to
+the systemd journal (<code>sudo journalctl -u skimmail -f</code>) <strong>and</strong> a rotating file at
+<code>/var/log/skimmail/skimmail.log</code> — level, rotation, truncate, and a <strong>realtime
+viewer</strong> live in <strong>Settings ▸ Logs</strong>. Upgrades come via <code>apt upgrade</code>. All
 release channels (image, <code>.deb</code>, apt repo) ship from GitHub — see
 <a href="https://github.com/lyquyduong/skimmail/blob/main/DISTRIBUTION.md"><code>DISTRIBUTION.md</code></a>.</p>
 <h3>First login</h3>
@@ -209,6 +212,34 @@ applies login rate-limiting + lockout, CSRF/origin checks, an SSRF guard on
 outbound fetches, strict security headers + a sandboxed email iframe, and an
 append-only audit log (<code>GET /api/audit</code>). See <a href="https://github.com/lyquyduong/skimmail/blob/main/SECURITY.md"><code>SECURITY.md</code></a> for the
 full posture and how to report a vulnerability.</p>
+<h2>Uninstall (complete removal)</h2>
+<p>Uninstalling never deletes your data by itself — accounts, the mail cache, and the
+encryption <strong>master key</strong> live in the Docker volume or <code>/var/lib/skimmail</code>. The
+steps marked ⚠ below delete them <strong>permanently</strong> (there is no way back without a
+backup). The same commands apply to both editions (<code>skimmail</code> / <code>skimmail-wg</code>).</p>
+<p><strong>Docker Compose</strong></p>
+<pre><code class="language-bash">docker compose down -v            # ⚠ stops + removes containers AND the data volumes
+# WG edition:  docker compose --profile wireguard down -v
+docker rmi ghcr.io/lyquyduong/skimmail:latest ghcr.io/lyquyduong/skimmail-wg:latest 2&gt;/dev/null
+rm docker-compose.yml             # the file you downloaded
+</code></pre>
+<p><strong>Docker (<code>docker run</code>)</strong></p>
+<pre><code class="language-bash">docker rm -f skimmail
+docker volume rm skimmail-data    # ⚠ all data
+docker rmi ghcr.io/lyquyduong/skimmail:latest     # or …/skimmail-wg:latest
+</code></pre>
+<p><strong>APT (Ubuntu / Debian)</strong></p>
+<pre><code class="language-bash">sudo apt purge skimmail           # or: skimmail-wg — stops the service, removes
+                                  # the binary, the systemd unit and /etc/default/skimmail
+sudo rm -rf /var/lib/skimmail     # ⚠ data — apt keeps it on purpose
+sudo rm -rf /var/log/skimmail     # log file + rotated backups
+sudo userdel skimmail             # the system user created at install
+# remove the APT repo + signing key you added:
+sudo rm -f /etc/apt/sources.list.d/skimmail.list /usr/share/keyrings/skimmail.gpg
+sudo apt update
+</code></pre>
+<p><strong>Manual binary (tarball)</strong> — stop the process (or your own systemd unit), then
+delete the binary and its data dir (<code>DATA_DIR</code>, default <code>./data</code> next to the binary).</p>
 <h2>Developers</h2>
 <p>Building from source, dev mode (hot reload), VS Code setup, build tags, tests, and
 project layout are in <strong><a href="https://github.com/lyquyduong/skimmail/blob/main/README.dev.md"><code>README.dev.md</code></a></strong>.</p>
