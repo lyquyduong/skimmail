@@ -1,15 +1,15 @@
 Package: skimmail
-Version: 1.4.2
+Version: 1.4.3
 Architecture: arm64
 Maintainer: lyquyduong <noreply@users.noreply.github.com>
-Installed-Size: 14914
-Conflicts: skimmail-wg
-Replaces: skimmail-wg
-Filename: pool/main/skimmail_1.4.2_arm64.deb
-Size: 6903378
-MD5sum: 8c23fce5979c489d53550047d6701b8e
-SHA1: 971a76449d7dd8c65dffdd63104477230396be88
-SHA256: 58a0d9108a0d9ec51ac7d7ddaa8e11ac5544f982a1ba2d345f546bdd371bc710
+Installed-Size: 18818
+Conflicts: skimmail-wg (<< 1.4.3)
+Replaces: skimmail-wg (<< 1.4.3)
+Filename: pool/main/skimmail_1.4.3_arm64.deb
+Size: 7931470
+MD5sum: ef5c9032b2acb247ead36a98beb361b9
+SHA1: 865e205c5a88a8896ca61239c9225f8b97c16147
+SHA256: 8987d2e43fb5028b82c588af540fff7c0ef5801ca0d3575b0e34f0438ce363f9
 Section: mail
 Priority: optional
 Homepage: https://github.com/lyquyduong/skimmail
@@ -18,21 +18,23 @@ Description: SkimMail — lightweight, self-hosted multi-account email reader.
 License: AGPL-3.0-or-later
 
 Package: skimmail-wg
-Version: 1.4.2
+Version: 1.4.3
 Architecture: arm64
 Maintainer: lyquyduong <noreply@users.noreply.github.com>
-Installed-Size: 17922
-Conflicts: skimmail
-Replaces: skimmail
-Filename: pool/main/skimmail-wg_1.4.2_arm64.deb
-Size: 7941680
-MD5sum: 855d8e362e2b8dbacff2303d1dbd5a18
-SHA1: c1a6b62a8b563d9af6bf2091d7297199c28b6fbf
-SHA256: 61dc8791b03b73cedcb559eede7c2126d52c530598428b0741fcb5eeeefb259a
-Section: mail
+Installed-Size: 0
+Depends: skimmail (>= 1.4.3)
+Filename: pool/main/skimmail-wg_1.4.3_arm64.deb
+Size: 770
+MD5sum: 00d2a5a206f716afcf99ae351881ce18
+SHA1: 6c98f018e06d0b724f694355bcbf11979a6a0e33
+SHA256: 118c0ca386d650b93083600eb3b734ec39bc05cea31c5235f6f1e50b3bf620c5
+Section: oldlibs
 Priority: optional
 Homepage: https://github.com/lyquyduong/skimmail
-Description: SkimMail — lightweight, self-hosted multi-account email reader.
- Reads IMAP/Gmail/Outlook fast with a keyboard-first web UI. (embedded WireGuard egress, §21)
+Description: SkimMail — transitional package (embedded WireGuard folded into skimmail).
+ Embedded WireGuard egress is now part of the single `skimmail` package (the
+ engine is a downloaded plugin). This empty package depends on `skimmail` so a
+ former SkimMailWG install migrates automatically on `apt upgrade`; the
+ WireGuard tunnels keep working. Safe to remove once skimmail is installed.
 License: AGPL-3.0-or-later
 
