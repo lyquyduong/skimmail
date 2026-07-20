@@ -1,15 +1,15 @@
 Package: skimmail
-Version: 1.4.5
+Version: 1.4.6
 Architecture: arm64
 Maintainer: lyquyduong <noreply@users.noreply.github.com>
 Installed-Size: 18818
-Conflicts: skimmail-wg (<< 1.4.5)
-Replaces: skimmail-wg (<< 1.4.5)
-Filename: pool/main/skimmail_1.4.5_arm64.deb
-Size: 7927990
-MD5sum: ace72f8d13d03b2f5df346fe576b7390
-SHA1: d27eb4de491eb90e5b4c2e8dd06612398e534baf
-SHA256: ae1012c6bcda47799fbbcf174e2add3fb04f705284d06374dfb30fba0244e4a5
+Conflicts: skimmail-wg (<< 1.4.6)
+Replaces: skimmail-wg (<< 1.4.6)
+Filename: pool/main/skimmail_1.4.6_arm64.deb
+Size: 7928024
+MD5sum: 00e0f0aa02ebbd4198f150495f79d365
+SHA1: 9726ede4a3ec61e72341491207f202d2ceedcfb5
+SHA256: 25678466390225d83bac648794a241b417021e83f6846730112220cd5c8b6935
 Section: mail
 Priority: optional
 Homepage: https://github.com/lyquyduong/skimmail
@@ -18,16 +18,16 @@ Description: SkimMail — lightweight, self-hosted multi-account email reader.
 License: AGPL-3.0-or-later
 
 Package: skimmail-wg
-Version: 1.4.5
+Version: 1.4.6
 Architecture: arm64
 Maintainer: lyquyduong <noreply@users.noreply.github.com>
 Installed-Size: 0
-Depends: skimmail (>= 1.4.5)
-Filename: pool/main/skimmail-wg_1.4.5_arm64.deb
+Depends: skimmail (>= 1.4.6)
+Filename: pool/main/skimmail-wg_1.4.6_arm64.deb
 Size: 768
-MD5sum: f4db3fd345da24c86b879393e6639d9c
-SHA1: 9377dab07c8bd44ca6309ac08b625238008e6cf5
-SHA256: 9929aa449a3664a5d5587d23da0cf3434467c5ffb054889e13873048061054b6
+MD5sum: 500596992f1767bc4a27b37ee8ce5434
+SHA1: af115834b302527d6973f80c7b279795ea16b334
+SHA256: 5f9ac545b2363ad0164cc18e10a12d3c5e4bff8f96116b0db823e818656a4186
 Section: oldlibs
 Priority: optional
 Homepage: https://github.com/lyquyduong/skimmail
