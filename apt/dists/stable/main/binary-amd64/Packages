@@ -2,14 +2,14 @@ Package: skimmail
 Version: 1.4.6
 Architecture: amd64
 Maintainer: lyquyduong <noreply@users.noreply.github.com>
-Installed-Size: 19758
+Installed-Size: 19762
 Conflicts: skimmail-wg (<< 1.4.6)
 Replaces: skimmail-wg (<< 1.4.6)
 Filename: pool/main/skimmail_1.4.6_amd64.deb
-Size: 8497808
-MD5sum: e3eed2246a98de09b207ad9e1a8cd56c
-SHA1: c1fd5cf79586e4562389c6e4d3ab7df3bdf5b2c2
-SHA256: 2d2a13ec07fd22339ad94776b590553879199503f0bca26acb2375c0f5e432d5
+Size: 8493620
+MD5sum: 1b9bd056b1b160e1ba55464cae21d62f
+SHA1: e0a333eba4667a8a4ebe0bcaa49addf78da628f4
+SHA256: 18529f995e4f752ccdb0ddb70c5c4f1c3224012df68f9f39a1c4abec439a9957
 Section: mail
 Priority: optional
 Homepage: https://github.com/lyquyduong/skimmail
@@ -25,9 +25,9 @@ Installed-Size: 0
 Depends: skimmail (>= 1.4.6)
 Filename: pool/main/skimmail-wg_1.4.6_amd64.deb
 Size: 768
-MD5sum: 29a88bd112315f449dc88eaf249901f2
-SHA1: 5b5f5d18326231b12c7630d098ee87f8d280159c
-SHA256: 1e262a59f859266f6775bfbbac3299c67267ba60f3d859351915221fcbea2450
+MD5sum: 2fabcfa117d9bf0067776274f530687a
+SHA1: 43589428b37c2d98e399ece38b031cbe3dc0a390
+SHA256: 129b3d19f3de7f8ba50a74e43aa7f2c0802d7c2d3a47da8fd6f00124eb5f1b7c
 Section: oldlibs
 Priority: optional
 Homepage: https://github.com/lyquyduong/skimmail
