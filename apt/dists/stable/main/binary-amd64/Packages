@@ -1,40 +1,17 @@
 Package: skimmail
-Version: 1.6.0
+Version: 1.7.0
 Architecture: amd64
 Maintainer: lyquyduong <noreply@users.noreply.github.com>
-Installed-Size: 19874
-Conflicts: skimmail-wg (<< 1.6.0)
-Replaces: skimmail-wg (<< 1.6.0)
-Filename: pool/main/skimmail_1.6.0_amd64.deb
-Size: 8574036
-MD5sum: efdf36d0d609c78c2582c8230a881981
-SHA1: b8e974030b07109f62365d30ebc279774623d356
-SHA256: 08a476b2e76a6e63882dbadcde8910de670d650581ce523642648489d3fdc6e3
+Installed-Size: 19870
+Filename: pool/main/skimmail_1.7.0_amd64.deb
+Size: 8569452
+MD5sum: a83ae972441e16c6f8a03b57b3e5d9c4
+SHA1: f20ab4a55348f42dc1d98324a175e3e489a03e3a
+SHA256: 110dfcb5556a85e545801e9a1c7d74849d61ade4692b38d472947493fc6109b0
 Section: mail
 Priority: optional
 Homepage: https://github.com/lyquyduong/skimmail
 Description: SkimMail — lightweight, self-hosted multi-account email reader.
  Reads IMAP/Gmail/Outlook fast with a keyboard-first web UI.
-License: AGPL-3.0-or-later
-
-Package: skimmail-wg
-Version: 1.6.0
-Architecture: amd64
-Maintainer: lyquyduong <noreply@users.noreply.github.com>
-Installed-Size: 0
-Depends: skimmail (>= 1.6.0)
-Filename: pool/main/skimmail-wg_1.6.0_amd64.deb
-Size: 766
-MD5sum: 3f030c4552292637198e753c2dfe0ef4
-SHA1: 43d96fa5b1a017a4d8b892840ba6b67a2c29afe6
-SHA256: 64c67b7d7207a1b6b24dfae7d5494c65805abb9fe835bf1f868d5ab82a05c082
-Section: oldlibs
-Priority: optional
-Homepage: https://github.com/lyquyduong/skimmail
-Description: SkimMail — transitional package (embedded WireGuard folded into skimmail).
- Embedded WireGuard egress is now part of the single `skimmail` package (the
- engine is a downloaded plugin). This empty package depends on `skimmail` so a
- former SkimMailWG install migrates automatically on `apt upgrade`; the
- WireGuard tunnels keep working. Safe to remove once skimmail is installed.
 License: AGPL-3.0-or-later
 
