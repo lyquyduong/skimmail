@@ -1,88 +1,62 @@
 {
     "plugins": {
         "skimmail-tunnel-ts": {
-            "version": "1.7.0",
+            "version": "1.8.0",
             "kind": "skimmail",
             "artifacts": {
                 "linux/amd64": {
-                    "url": "https://github.com/lyquyduong/skimmail/releases/download/v1.7.0/skimmail-tunnel-ts_v1.7.0_linux_amd64.tar.gz",
-                    "sha256": "a2150f3ceed8b1db81c728ed2621ec9133207167d2ddd084c2f7fcad8af3cd53",
+                    "url": "https://github.com/lyquyduong/skimmail/releases/download/v1.8.0/skimmail-tunnel-ts_v1.8.0_linux_amd64.tar.gz",
+                    "sha256": "03cc0d9f4f7c78e381b40cb90a810622027c6054843ed4ce9b8e08b637ad6dab",
                     "format": "tgz",
                     "member": "skimmail-tunnel-ts"
                 },
                 "linux/arm64": {
-                    "url": "https://github.com/lyquyduong/skimmail/releases/download/v1.7.0/skimmail-tunnel-ts_v1.7.0_linux_arm64.tar.gz",
-                    "sha256": "8112cec7c1054973e4c6156a89326b9d5ebb1a58876a82a0f858681066d4b2dd",
+                    "url": "https://github.com/lyquyduong/skimmail/releases/download/v1.8.0/skimmail-tunnel-ts_v1.8.0_linux_arm64.tar.gz",
+                    "sha256": "e6c37e6424486eaab33bb59d1b954532ce7161661d3d723aa6a809a29e96037c",
                     "format": "tgz",
                     "member": "skimmail-tunnel-ts"
                 },
                 "darwin/amd64": {
-                    "url": "https://github.com/lyquyduong/skimmail/releases/download/v1.7.0/skimmail-tunnel-ts_v1.7.0_darwin_amd64.tar.gz",
-                    "sha256": "9e2e8f391cff25f7da9ea3c5388d8eac9da4ec9bc84e9931581a11ce804b57d1",
+                    "url": "https://github.com/lyquyduong/skimmail/releases/download/v1.8.0/skimmail-tunnel-ts_v1.8.0_darwin_amd64.tar.gz",
+                    "sha256": "b3aa303aa4fa60383bfc2c5d688682059f0687e293b76ff6c7abbb5d22f71d47",
                     "format": "tgz",
                     "member": "skimmail-tunnel-ts"
                 },
                 "darwin/arm64": {
-                    "url": "https://github.com/lyquyduong/skimmail/releases/download/v1.7.0/skimmail-tunnel-ts_v1.7.0_darwin_arm64.tar.gz",
-                    "sha256": "dc06b70dda49779463bcdba4294915dd68e53a0bd952aebdcbf185cf6ab8783b",
+                    "url": "https://github.com/lyquyduong/skimmail/releases/download/v1.8.0/skimmail-tunnel-ts_v1.8.0_darwin_arm64.tar.gz",
+                    "sha256": "40968da4e5838c5b4cb984a965a63fdf1b64f0d48f3d80f534c54613b9722362",
                     "format": "tgz",
                     "member": "skimmail-tunnel-ts"
                 }
             }
         },
         "skimmail-egress-wg": {
-            "version": "1.7.0",
+            "version": "1.8.0",
             "kind": "skimmail",
             "artifacts": {
                 "linux/amd64": {
-                    "url": "https://github.com/lyquyduong/skimmail/releases/download/v1.7.0/skimmail-egress-wg_v1.7.0_linux_amd64.tar.gz",
-                    "sha256": "0e11e747c0f8e74fe6416eb63740a8c7828232dd8d7db3367ad609d19eba896c",
+                    "url": "https://github.com/lyquyduong/skimmail/releases/download/v1.8.0/skimmail-egress-wg_v1.8.0_linux_amd64.tar.gz",
+                    "sha256": "4b9a45465ba831469796ebbf59f801ecbbbb61d577091444bde8b866e5ddf591",
                     "format": "tgz",
                     "member": "skimmail-egress-wg"
                 },
                 "linux/arm64": {
-                    "url": "https://github.com/lyquyduong/skimmail/releases/download/v1.7.0/skimmail-egress-wg_v1.7.0_linux_arm64.tar.gz",
-                    "sha256": "1b8b1311a2a0a3149cb26d06b36b28a2b7e2712450a1d7b81c59ae32fe52a010",
+                    "url": "https://github.com/lyquyduong/skimmail/releases/download/v1.8.0/skimmail-egress-wg_v1.8.0_linux_arm64.tar.gz",
+                    "sha256": "a53a13fa6950edb283a0e68d2dd441b8eb76182d9dfa5df80cb3c42c74388ec2",
                     "format": "tgz",
                     "member": "skimmail-egress-wg"
                 },
                 "darwin/amd64": {
-                    "url": "https://github.com/lyquyduong/skimmail/releases/download/v1.7.0/skimmail-egress-wg_v1.7.0_darwin_amd64.tar.gz",
-                    "sha256": "7a7c16b6810333d7328fc0078a208118858e69cbd46fd9682ea876d10e4aa3db",
+                    "url": "https://github.com/lyquyduong/skimmail/releases/download/v1.8.0/skimmail-egress-wg_v1.8.0_darwin_amd64.tar.gz",
+                    "sha256": "89d6fb12d88640f641c5cd2931f8675e50f04cb35b1555ade36c33607224d4b7",
                     "format": "tgz",
                     "member": "skimmail-egress-wg"
                 },
                 "darwin/arm64": {
-                    "url": "https://github.com/lyquyduong/skimmail/releases/download/v1.7.0/skimmail-egress-wg_v1.7.0_darwin_arm64.tar.gz",
-                    "sha256": "8b15f1e3ad896ced3fa288bcc5a12b1b3c72fab9ce4029ae46d50ba4d049e7ea",
+                    "url": "https://github.com/lyquyduong/skimmail/releases/download/v1.8.0/skimmail-egress-wg_v1.8.0_darwin_arm64.tar.gz",
+                    "sha256": "e09c5c481f47dfe4a4fbc1f4891bb7f2b0faed95ae5f3eaf7ba20d5085f31844",
                     "format": "tgz",
                     "member": "skimmail-egress-wg"
-                }
-            }
-        },
-        "cloudflared": {
-            "version": "2026.7.2",
-            "kind": "external",
-            "artifacts": {
-                "linux/amd64": {
-                    "url": "https://github.com/cloudflare/cloudflared/releases/download/2026.7.2/cloudflared-linux-amd64",
-                    "sha256": "ec905ea7b7e327ff8abdde8cb64697a2152de74dbcdbf6aec9db8364eb3886cd"
-                },
-                "linux/arm64": {
-                    "url": "https://github.com/cloudflare/cloudflared/releases/download/2026.7.2/cloudflared-linux-arm64",
-                    "sha256": "405df476437e027fc6d18729a5a77155c0a33a6082aeee60a799a688f3052e66"
-                },
-                "darwin/amd64": {
-                    "url": "https://github.com/cloudflare/cloudflared/releases/download/2026.7.2/cloudflared-darwin-amd64.tgz",
-                    "sha256": "4ee0d3b48a990a2f9b5faec5838f73ec1f400aa8e0a4864be576adfafec406cb",
-                    "format": "tgz",
-                    "member": "cloudflared"
-                },
-                "darwin/arm64": {
-                    "url": "https://github.com/cloudflare/cloudflared/releases/download/2026.7.2/cloudflared-darwin-arm64.tgz",
-                    "sha256": "2086e51c61d6565781d84117a5007d0c826d03ffdc74acb91c08c167f9f8cd7c",
-                    "format": "tgz",
-                    "member": "cloudflared"
                 }
             }
         }
