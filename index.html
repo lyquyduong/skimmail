@@ -80,19 +80,17 @@ docker compose up -d                       # → http://localhost:8080  (SQLite 
 <pre><code class="language-bash">docker run -d -p 8080:8080 -v skimmail-data:/data \
   -e AUTH_MODE=passphrase ghcr.io/lyquyduong/skimmail:latest
 </code></pre>
-<p><strong>Editions:</strong> <code>skimmail</code> is the lean default. For <strong>embedded WireGuard egress</strong>
-(route an account through an in-app WireGuard tunnel, §21) use the <strong><code>skimmail-wg</code></strong>
-edition instead — same everywhere, just <code>-wg</code>:</p>
-<pre><code class="language-bash">docker run -d -p 8080:8080 -v skimmail-data:/data \
-  -e AUTH_MODE=passphrase ghcr.io/lyquyduong/skimmail-wg:latest
-</code></pre>
+<p><strong>One package, everything included.</strong> There used to be a separate <code>skimmail-wg</code>
+edition for <strong>embedded WireGuard egress</strong> (routing an account through an in-app
+WireGuard tunnel, §21). Since 1.4.3 that lives in the default build: the tunnel
+engine is a SHA256-pinned plugin SkimMail downloads when you first enable it, so
+there is nothing extra to install and no second image to choose.</p>
 <h3>Install on Ubuntu / Debian (apt)</h3>
 <pre><code class="language-bash">curl -fsSL https://lyquyduong.github.io/skimmail/apt/skimmail.gpg \
   | sudo tee /usr/share/keyrings/skimmail.gpg &gt;/dev/null
 echo &quot;deb [signed-by=/usr/share/keyrings/skimmail.gpg] https://lyquyduong.github.io/skimmail/apt stable main&quot; \
   | sudo tee /etc/apt/sources.list.d/skimmail.list
 sudo apt update &amp;&amp; sudo apt install skimmail      # runs as a systemd service → http://localhost:8080
-#                          … or:  sudo apt install skimmail-wg   # embedded WireGuard edition (§21)
 </code></pre>
 <p>Config lives in <code>/etc/default/skimmail</code>; data in <code>/var/lib/skimmail</code>; <strong>logs</strong> go to
 the systemd journal (<code>sudo journalctl -u skimmail -f</code>) <strong>and</strong> a rotating file at
@@ -101,9 +99,19 @@ viewer</strong> live in <strong>Settings ▸ Logs</strong>. Upgrades come via <c
 release channels (image, <code>.deb</code>, apt repo) ship from GitHub — see
 <a href="https://github.com/lyquyduong/skimmail/blob/main/DISTRIBUTION.md"><code>DISTRIBUTION.md</code></a>.</p>
 <h3>First login</h3>
-<p>Open <strong>http://localhost:8080</strong>. The default auth mode is <code>passphrase</code>: <strong>the first
-password you enter becomes your master passphrase</strong> — remember it (it's used to
-log in again). Leave the username blank.</p>
+<p>Open <strong>http://localhost:8080</strong>. Before it lets you create anything, SkimMail asks
+for a <strong>one-time claim code</strong> it printed at first boot — it is what stops whoever
+reaches the port first from claiming your instance:</p>
+<pre><code class="language-bash">sudo journalctl -u skimmail | grep 'claim code'        # apt (sudo: the journal is root-only)
+docker logs skimmail 2&gt;&amp;1 | grep 'claim code'          # docker
+</code></pre>
+<p>Lost it? Mint a replacement — the old one stops working:</p>
+<pre><code class="language-bash">sudo -u skimmail skimmail --data-dir /var/lib/skimmail claim-code --rotate
+</code></pre>
+<p>On a closed network you can skip the gate entirely with <code>SKIMMAIL_SKIP_CLAIM=1</code>.</p>
+<p>Then the default auth mode is <code>passphrase</code>: <strong>the first password you enter becomes
+your master passphrase</strong> — remember it (it's used to log in again). Leave the
+username blank.</p>
 <h3>Add a mail account</h3>
 <p>Add an <strong>IMAP</strong> account: email · host (e.g. <code>imap.gmail.com</code>) · port <code>993</code> ·
 security <code>TLS</code> · <strong>app password</strong>.</p>
@@ -222,21 +230,20 @@ full posture and how to report a vulnerability.</p>
 <p>Uninstalling never deletes your data by itself — accounts, the mail cache, and the
 encryption <strong>master key</strong> live in the Docker volume or <code>/var/lib/skimmail</code>. The
 steps marked ⚠ below delete them <strong>permanently</strong> (there is no way back without a
-backup). The same commands apply to both editions (<code>skimmail</code> / <code>skimmail-wg</code>).</p>
+backup).</p>
 <p><strong>Docker Compose</strong></p>
 <pre><code class="language-bash">docker compose down -v            # ⚠ stops + removes containers AND the data volumes
-# WG edition:  docker compose --profile wireguard down -v
-docker rmi ghcr.io/lyquyduong/skimmail:latest ghcr.io/lyquyduong/skimmail-wg:latest 2&gt;/dev/null
+docker rmi ghcr.io/lyquyduong/skimmail:latest 2&gt;/dev/null
 rm docker-compose.yml             # the file you downloaded
 </code></pre>
 <p><strong>Docker (<code>docker run</code>)</strong></p>
 <pre><code class="language-bash">docker rm -f skimmail
 docker volume rm skimmail-data    # ⚠ all data
-docker rmi ghcr.io/lyquyduong/skimmail:latest     # or …/skimmail-wg:latest
+docker rmi ghcr.io/lyquyduong/skimmail:latest
 </code></pre>
 <p><strong>APT (Ubuntu / Debian)</strong></p>
-<pre><code class="language-bash">sudo apt purge skimmail           # or: skimmail-wg — stops the service, removes
-                                  # the binary, the systemd unit and /etc/default/skimmail
+<pre><code class="language-bash">sudo apt purge skimmail           # stops the service, removes the binary, the
+                                  # systemd unit and /etc/default/skimmail
 sudo rm -rf /var/lib/skimmail     # ⚠ data — apt keeps it on purpose
 sudo rm -rf /var/log/skimmail     # log file + rotated backups
 sudo userdel skimmail             # the system user created at install

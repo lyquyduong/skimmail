@@ -78,19 +78,17 @@ docker compose up -d                       # → http://localhost:8080  (SQLite 
 <pre><code class="language-bash">docker run -d -p 8080:8080 -v skimmail-data:/data \
   -e AUTH_MODE=passphrase ghcr.io/lyquyduong/skimmail:latest
 </code></pre>
-<p><strong>Hai bản:</strong> <code>skimmail</code> là bản gọn mặc định. Nếu cần <strong>WireGuard egress nhúng</strong>
-(định tuyến một tài khoản qua tunnel WireGuard ngay trong app, §21), dùng bản
-<strong><code>skimmail-wg</code></strong> — giống hệt, chỉ khác hậu tố <code>-wg</code>:</p>
-<pre><code class="language-bash">docker run -d -p 8080:8080 -v skimmail-data:/data \
-  -e AUTH_MODE=passphrase ghcr.io/lyquyduong/skimmail-wg:latest
-</code></pre>
+<p><strong>Một gói, có sẵn mọi thứ.</strong> Trước đây có một bản riêng <code>skimmail-wg</code> cho
+<strong>WireGuard egress nhúng</strong> (định tuyến một tài khoản qua tunnel WireGuard ngay
+trong app, §21). Từ 1.4.3 tính năng đó nằm luôn trong bản mặc định: engine tunnel
+là một plugin ghim SHA256 mà SkimMail tự tải khi bạn bật lần đầu, nên không phải
+cài thêm gì và không phải chọn image thứ hai.</p>
 <h3>Cài trên Ubuntu / Debian (apt)</h3>
 <pre><code class="language-bash">curl -fsSL https://lyquyduong.github.io/skimmail/apt/skimmail.gpg \
   | sudo tee /usr/share/keyrings/skimmail.gpg &gt;/dev/null
 echo &quot;deb [signed-by=/usr/share/keyrings/skimmail.gpg] https://lyquyduong.github.io/skimmail/apt stable main&quot; \
   | sudo tee /etc/apt/sources.list.d/skimmail.list
 sudo apt update &amp;&amp; sudo apt install skimmail      # chạy như systemd service → http://localhost:8080
-#                          … hoặc:  sudo apt install skimmail-wg   # bản WireGuard nhúng (§21)
 </code></pre>
 <p>Cấu hình ở <code>/etc/default/skimmail</code>; dữ liệu ở <code>/var/lib/skimmail</code>; <strong>log</strong> nằm trong
 systemd journal (<code>sudo journalctl -u skimmail -f</code>) <strong>và</strong> file xoay vòng tại
@@ -98,9 +96,19 @@ systemd journal (<code>sudo journalctl -u skimmail -f</code>) <strong>và</stron
 realtime</strong> nằm ở <strong>Settings ▸ Logs</strong>. Nâng cấp qua <code>apt upgrade</code>. Mọi kênh phát hành
 (image, <code>.deb</code>, apt repo) đều ship từ GitHub — xem <a href="https://github.com/lyquyduong/skimmail/blob/main/DISTRIBUTION.md"><code>DISTRIBUTION.md</code></a>.</p>
 <h3>Đăng nhập lần đầu</h3>
-<p>Mở <strong>http://localhost:8080</strong>. Chế độ auth mặc định là <code>passphrase</code>: <strong>mật khẩu bạn
-nhập lần đầu tiên sẽ trở thành passphrase chính</strong> — hãy nhớ nó (dùng để đăng nhập
-lại). Để trống ô username.</p>
+<p>Mở <strong>http://localhost:8080</strong>. Trước khi cho bạn tạo bất cứ thứ gì, SkimMail hỏi
+một <strong>mã claim dùng một lần</strong> đã in ra lúc khởi động đầu tiên — đây là thứ ngăn
+người truy cập trước chiếm mất instance của bạn:</p>
+<pre><code class="language-bash">sudo journalctl -u skimmail | grep 'claim code'        # apt (cần sudo: journal chỉ root đọc được)
+docker logs skimmail 2&gt;&amp;1 | grep 'claim code'          # docker
+</code></pre>
+<p>Mất mã? Tạo mã thay thế — mã cũ hết hiệu lực:</p>
+<pre><code class="language-bash">sudo -u skimmail skimmail --data-dir /var/lib/skimmail claim-code --rotate
+</code></pre>
+<p>Trên mạng kín, bạn có thể bỏ hẳn cổng này bằng <code>SKIMMAIL_SKIP_CLAIM=1</code>.</p>
+<p>Sau đó, chế độ auth mặc định là <code>passphrase</code>: <strong>mật khẩu bạn nhập lần đầu tiên sẽ
+trở thành passphrase chính</strong> — hãy nhớ nó (dùng để đăng nhập lại). Để trống ô
+username.</p>
 <h3>Thêm tài khoản mail</h3>
 <p>Thêm tài khoản <strong>IMAP</strong>: email · host (vd <code>imap.gmail.com</code>) · port <code>993</code> · bảo mật
 <code>TLS</code> · <strong>app password</strong>.</p>
@@ -212,22 +220,20 @@ và cách báo lỗ hổng.</p>
 <h2>Gỡ cài đặt (xoá hoàn toàn)</h2>
 <p>Bản thân việc gỡ cài đặt không xoá dữ liệu — tài khoản, cache mail và <strong>master
 key</strong> mã hoá nằm trong Docker volume hoặc <code>/var/lib/skimmail</code>. Các bước đánh dấu
-⚠ bên dưới xoá chúng <strong>vĩnh viễn</strong> (không khôi phục được nếu không có backup).
-Lệnh dùng chung cho cả hai bản (<code>skimmail</code> / <code>skimmail-wg</code>).</p>
+⚠ bên dưới xoá chúng <strong>vĩnh viễn</strong> (không khôi phục được nếu không có backup).</p>
 <p><strong>Docker Compose</strong></p>
 <pre><code class="language-bash">docker compose down -v            # ⚠ dừng + xoá container VÀ volume dữ liệu
-# Bản WG:  docker compose --profile wireguard down -v
-docker rmi ghcr.io/lyquyduong/skimmail:latest ghcr.io/lyquyduong/skimmail-wg:latest 2&gt;/dev/null
+docker rmi ghcr.io/lyquyduong/skimmail:latest 2&gt;/dev/null
 rm docker-compose.yml             # file compose đã tải về
 </code></pre>
 <p><strong>Docker (<code>docker run</code>)</strong></p>
 <pre><code class="language-bash">docker rm -f skimmail
 docker volume rm skimmail-data    # ⚠ toàn bộ dữ liệu
-docker rmi ghcr.io/lyquyduong/skimmail:latest     # hoặc …/skimmail-wg:latest
+docker rmi ghcr.io/lyquyduong/skimmail:latest
 </code></pre>
 <p><strong>APT (Ubuntu / Debian)</strong></p>
-<pre><code class="language-bash">sudo apt purge skimmail           # hoặc: skimmail-wg — dừng service, xoá binary,
-                                  # unit systemd và /etc/default/skimmail
+<pre><code class="language-bash">sudo apt purge skimmail           # dừng service, xoá binary, unit systemd
+                                  # và /etc/default/skimmail
 sudo rm -rf /var/lib/skimmail     # ⚠ dữ liệu — apt cố tình giữ lại
 sudo rm -rf /var/log/skimmail     # file log + các bản đã xoay
 sudo userdel skimmail             # system user được tạo lúc cài

@@ -76,18 +76,16 @@ docker compose up -d                       # → http://localhost:8080（SQLite 
 <pre><code class="language-bash">docker run -d -p 8080:8080 -v skimmail-data:/data \
   -e AUTH_MODE=passphrase ghcr.io/lyquyduong/skimmail:latest
 </code></pre>
-<p><strong>两个版本：</strong> <code>skimmail</code> 是精简默认版。若需要<strong>内嵌 WireGuard 出口</strong>（在应用内让某账户
-通过 WireGuard 隧道，§21），改用 <strong><code>skimmail-wg</code></strong> 版本——完全相同，只是加了 <code>-wg</code> 后缀：</p>
-<pre><code class="language-bash">docker run -d -p 8080:8080 -v skimmail-data:/data \
-  -e AUTH_MODE=passphrase ghcr.io/lyquyduong/skimmail-wg:latest
-</code></pre>
+<p><strong>一个软件包，功能齐备。</strong> 过去曾有一个单独的 <code>skimmail-wg</code> 版本用于<strong>内嵌 WireGuard
+出口</strong>（在应用内让某账户通过 WireGuard 隧道，§21）。自 1.4.3 起该能力已并入默认构建：
+隧道引擎是一个按 SHA256 固定的插件，首次启用时由 SkimMail 自动下载，无需额外安装，
+也不必在两个镜像之间做选择。</p>
 <h3>在 Ubuntu / Debian 上安装（apt）</h3>
 <pre><code class="language-bash">curl -fsSL https://lyquyduong.github.io/skimmail/apt/skimmail.gpg \
   | sudo tee /usr/share/keyrings/skimmail.gpg &gt;/dev/null
 echo &quot;deb [signed-by=/usr/share/keyrings/skimmail.gpg] https://lyquyduong.github.io/skimmail/apt stable main&quot; \
   | sudo tee /etc/apt/sources.list.d/skimmail.list
 sudo apt update &amp;&amp; sudo apt install skimmail      # 作为 systemd 服务运行 → http://localhost:8080
-#                          … 或:  sudo apt install skimmail-wg   # 内嵌 WireGuard 版本（§21）
 </code></pre>
 <p>配置位于 <code>/etc/default/skimmail</code>；数据位于 <code>/var/lib/skimmail</code>；<strong>日志</strong>写入 systemd
 journal（<code>sudo journalctl -u skimmail -f</code>）<strong>及</strong>轮转文件
@@ -95,8 +93,17 @@ journal（<code>sudo journalctl -u skimmail -f</code>）<strong>及</strong>轮�
 <strong>Settings ▸ Logs</strong>。升级通过 <code>apt upgrade</code>。所有发布渠道（镜像、<code>.deb</code>、
 apt 仓库）都从 GitHub 发布——见 <a href="https://github.com/lyquyduong/skimmail/blob/main/DISTRIBUTION.md"><code>DISTRIBUTION.md</code></a>。</p>
 <h3>首次登录</h3>
-<p>打开 <strong>http://localhost:8080</strong>。默认认证模式为 <code>passphrase</code>：<strong>你第一次输入的密码会
-成为主口令</strong> ——请牢记（之后用它登录）。用户名留空。</p>
+<p>打开 <strong>http://localhost:8080</strong>。在让你创建任何东西之前，SkimMail 会先索取首次启动时
+打印的<strong>一次性认领码</strong> —— 它用来阻止先访问到端口的人抢先认领你的实例：</p>
+<pre><code class="language-bash">sudo journalctl -u skimmail | grep 'claim code'        # apt（需要 sudo：journal 仅 root 可读）
+docker logs skimmail 2&gt;&amp;1 | grep 'claim code'          # docker
+</code></pre>
+<p>丢失了？重新生成一个 —— 旧的随即失效：</p>
+<pre><code class="language-bash">sudo -u skimmail skimmail --data-dir /var/lib/skimmail claim-code --rotate
+</code></pre>
+<p>在封闭网络中，可用 <code>SKIMMAIL_SKIP_CLAIM=1</code> 直接跳过这道关卡。</p>
+<p>随后，默认认证模式为 <code>passphrase</code>：<strong>你第一次输入的密码会成为主口令</strong> ——请牢记
+（之后用它登录）。用户名留空。</p>
 <h3>添加邮箱账户</h3>
 <p>添加 <strong>IMAP</strong> 账户：邮箱 · host（如 <code>imap.gmail.com</code>） · 端口 <code>993</code> · 安全 <code>TLS</code> ·
 <strong>应用专用密码</strong>。</p>
@@ -204,22 +211,20 @@ apt 仓库）都从 GitHub 发布——见 <a href="https://github.com/lyquyduon
 （<code>GET /api/audit</code>）。完整安全姿态与漏洞报告方式见 <a href="https://github.com/lyquyduong/skimmail/blob/main/SECURITY.md"><code>SECURITY.md</code></a>。</p>
 <h2>卸载（完全移除）</h2>
 <p>卸载本身不会删除你的数据 —— 账户、邮件缓存和加密<strong>主密钥</strong>保存在 Docker 卷或
-<code>/var/lib/skimmail</code> 中。下面标 ⚠ 的步骤会<strong>永久</strong>删除它们（没有备份就无法恢复）。
-两个版本（<code>skimmail</code> / <code>skimmail-wg</code>）命令相同。</p>
+<code>/var/lib/skimmail</code> 中。下面标 ⚠ 的步骤会<strong>永久</strong>删除它们（没有备份就无法恢复）。</p>
 <p><strong>Docker Compose</strong></p>
 <pre><code class="language-bash">docker compose down -v            # ⚠ 停止并删除容器以及数据卷
-# WG 版:  docker compose --profile wireguard down -v
-docker rmi ghcr.io/lyquyduong/skimmail:latest ghcr.io/lyquyduong/skimmail-wg:latest 2&gt;/dev/null
+docker rmi ghcr.io/lyquyduong/skimmail:latest 2&gt;/dev/null
 rm docker-compose.yml             # 之前下载的 compose 文件
 </code></pre>
 <p><strong>Docker（<code>docker run</code>）</strong></p>
 <pre><code class="language-bash">docker rm -f skimmail
 docker volume rm skimmail-data    # ⚠ 全部数据
-docker rmi ghcr.io/lyquyduong/skimmail:latest     # 或 …/skimmail-wg:latest
+docker rmi ghcr.io/lyquyduong/skimmail:latest
 </code></pre>
 <p><strong>APT（Ubuntu / Debian）</strong></p>
-<pre><code class="language-bash">sudo apt purge skimmail           # 或: skimmail-wg —— 停止服务，删除二进制、
-                                  # systemd unit 和 /etc/default/skimmail
+<pre><code class="language-bash">sudo apt purge skimmail           # 停止服务，删除二进制、systemd unit
+                                  # 和 /etc/default/skimmail
 sudo rm -rf /var/lib/skimmail     # ⚠ 数据 —— apt 有意保留
 sudo rm -rf /var/log/skimmail     # 日志文件及轮转备份
 sudo userdel skimmail             # 安装时创建的系统用户
