@@ -1,22 +1,24 @@
-# SkimMail — end-user Docker Compose. Pulls prebuilt images from GHCR; no
+# SkimMail — end-user Docker Compose. Pulls a prebuilt image from GHCR; no
 # source or build step needed. This file is published with every release at:
 #   https://lyquyduong.github.io/skimmail/docker-compose.yml
 #   (also attached to each GitHub Release)
 #
 # Quick start:
 #   curl -fsSLO https://lyquyduong.github.io/skimmail/docker-compose.yml
-#   docker compose up -d                        # SkimMail       → http://localhost:8080
-#   docker compose --profile wireguard up -d    # SkimMailWG     → http://localhost:8082
+#   docker compose up -d            # → http://localhost:8080
 #
-# Pick ONE edition (they're the same app):
-#   • skimmail     — lean default
-#   • skimmail-wg  — adds embedded userspace WireGuard egress (§21). Only needed
-#     for in-app ("embedded") tunnels; OS-mode WireGuard (bind to a host wg
-#     interface) works in the plain edition too.
+# There is ONE image. Since 1.4.3 WireGuard egress is a plugin SkimMail
+# downloads at runtime, and since 1.7.0 the separate skimmail-wg image is no
+# longer published — a `--profile wireguard` from an older copy of this file
+# will fail to pull. Postgres, MySQL and S3 support are compiled into this
+# image too; select them with DB_DRIVER / BLOB_STORE below.
 #
 # Pin a version instead of latest:  SKIMMAIL_VERSION=v1.0.0 docker compose up -d
 #
-# First visit sets your master passphrase. Data lives in the named volume.
+# First run prints a one-time claim code to the log — you need it to claim the
+# instance before anyone else can:
+#   docker logs skimmail 2>&1 | grep 'claim code'
+#
 # Health: the image is distroless (no shell), so check from the host:
 #   curl http://localhost:8080/healthz
 name: skimmail
@@ -27,27 +29,25 @@ services:
     ports:
       - "8080:8080"
     environment:
-      AUTH_MODE: passphrase
-      BASE_URL: http://localhost:8080   # set to your public URL behind a reverse proxy
+      # Only these are needed to boot. Since 1.9.0 the public URL, the OAuth
+      # apps and the sign-in mode can all be set in the app instead — anything
+      # set here still wins, and shows up locked in the UI naming the variable.
       DATA_DIR: /data
+      # A container cannot read its own restart policy, so the `restart:` line
+      # below is only true if we also say so. Setup uses this to decide whether
+      # it may restart SkimMail for you after you choose a database. Keep the
+      # two together — drop one and you should drop both.
+      SKIMMAIL_SUPERVISED: "1"
+      # BASE_URL: https://mail.example.com   # your public URL behind a proxy
+      # AUTH_MODE: passphrase                # or choose it during first-run setup
+      #
+      # External database (drivers are built in; no rebuild needed). Set these
+      # BEFORE the first start — switching later means moving your data.
+      # DB_DRIVER: postgres
+      # DATABASE_URL: postgres://user:pass@db:5432/skimmail?sslmode=disable
     volumes:
       - skimmail-data:/data
     restart: unless-stopped
 
-  # SkimMailWG — embedded WireGuard egress edition. `--profile wireguard`.
-  skimmail-wg:
-    profiles: ["wireguard"]
-    image: ghcr.io/lyquyduong/skimmail-wg:${SKIMMAIL_VERSION:-latest}
-    ports:
-      - "8082:8080"
-    environment:
-      AUTH_MODE: passphrase
-      BASE_URL: http://localhost:8082
-      DATA_DIR: /data
-    volumes:
-      - skimmail-wg-data:/data
-    restart: unless-stopped
-
 volumes:
   skimmail-data:
-  skimmail-wg-data:

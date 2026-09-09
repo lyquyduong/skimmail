@@ -147,7 +147,7 @@ real-time over WebSocket.</p>
 <tr>
 <td><code>AUTH_MODE</code></td>
 <td><code>passphrase</code></td>
-<td><code>passphrase</code> (single-user) or <code>users</code> (multi-user)</td>
+<td><code>passphrase</code> (one shared passphrase) or <code>users</code> (an admin account with a username). <strong>Both are single-user today</strong> — SkimMail does not enforce per-user access control yet, so every account and mailbox belongs to the instance, not to a user. Multi-user is on the roadmap; until it lands, a second user would be able to read everything.</td>
 </tr>
 <tr>
 <td><code>DATA_DIR</code></td>
@@ -168,6 +168,11 @@ real-time over WebSocket.</p>
 <td><code>TRUST_PROXY</code></td>
 <td><code>false</code></td>
 <td>trust <code>X-Forwarded-*</code> behind a reverse proxy</td>
+</tr>
+<tr>
+<td><code>TRUSTED_PROXIES</code></td>
+<td>–</td>
+<td>comma-separated CIDRs trusted as proxy hops when <code>TRUST_PROXY=true</code> (default: loopback/private only)</td>
 </tr>
 <tr>
 <td><code>TRUSTED_ORIGINS</code></td>
