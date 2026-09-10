@@ -155,7 +155,7 @@ real-time over WebSocket.</p>
 <tr>
 <td><code>AUTH_MODE</code></td>
 <td><code>passphrase</code></td>
-<td><code>passphrase</code> (one shared passphrase) or <code>users</code> (an admin account with a username). <strong>Both are single-user today</strong> — SkimMail does not enforce per-user access control yet, so every account and mailbox belongs to the instance, not to a user. Multi-user is on the roadmap; until it lands, a second user would be able to read everything.</td>
+<td><code>passphrase</code> (one shared passphrase) or <code>users</code> (named accounts with roles). Since 1.10.0 <code>users</code> is really multi-user: each account owns its own mailboxes and cannot see anyone else's, and each user is <code>owner</code>, <code>operator</code> or <code>viewer</code>. Create them with <code>skimmail user add</code>.</td>
 </tr>
 <tr>
 <td><code>DATA_DIR</code></td>
@@ -260,8 +260,8 @@ project layout are in <strong><a href="https://github.com/lyquyduong/skimmail/bl
 <p><strong>SkimMail is proprietary software.</strong> It is licensed under the <a href="LICENSE">Business Source License 1.1</a> (Licensor: Duong Ly). The source code is private; only compiled binaries are distributed to users.</p>
 <h3>Three Tiers</h3>
 <ul>
-<li><strong>Community Edition</strong> — Free, 10 accounts / 3 proxies / 2 groups / 5 GB storage (no license key needed)</li>
-<li><strong>Sponsor Edition</strong> — Thank-you for GitHub Sponsors / backers (25 accounts / 5 proxies / 5 groups / 15 GB)</li>
+<li><strong>Community Edition</strong> — Free, 10 accounts / 1 sign-in / 3 proxies / 2 groups / 5 GB storage (no license key needed)</li>
+<li><strong>Sponsor Edition</strong> — Thank-you for GitHub Sponsors / backers (25 accounts / 3 sign-ins / 5 proxies / 5 groups / 15 GB)</li>
 <li><strong>Pro Edition</strong> — Paid license key; unlimited accounts/proxies/groups/storage + future <strong>AI Triage</strong> service</li>
 </ul>
 <p>See <a href="https://github.com/lyquyduong/skimmail/blob/main/COMMERCIAL-TERMS.md"><code>COMMERCIAL-TERMS.md</code></a> for details. Questions about licensing: see <a href="https://github.com/lyquyduong/skimmail/blob/main/SECURITY.md"><code>SECURITY.md</code></a>.</p>

@@ -37,7 +37,7 @@ ul,ol { padding-left:1.5em; }</style>
 IMAP 为核心 + Gmail/Outlook OAuth——打包为<strong>单个 Go 二进制</strong>并内嵌 React SPA。
 <strong>无需任何外部服务</strong>。</p>
 </blockquote>
-<p><strong>许可证：</strong> AGPL-3.0-or-later（+ CLA，见 <a href="https://github.com/lyquyduong/skimmail/blob/main/CLA.md"><code>CLA.md</code></a>） · <strong>安全：</strong> <a href="https://github.com/lyquyduong/skimmail/blob/main/SECURITY.md"><code>SECURITY.md</code></a></p>
+<p><strong>许可证：</strong> Business Source License 1.1（专有软件；2030 年转为 AGPL） · <strong>安全：</strong> <a href="https://github.com/lyquyduong/skimmail/blob/main/SECURITY.md"><code>SECURITY.md</code></a></p>
 <blockquote>
 <p><strong>这是 <code>0.1.0</code> 版本</strong> —— 专注的邮件阅读器 + 账户分组。其余能力（AI、通知、可插拔
 存储、应用内更新）已列入路线图。</p>
@@ -145,7 +145,7 @@ docker logs skimmail 2&gt;&amp;1 | grep 'claim code'          # docker
 <tr>
 <td><code>AUTH_MODE</code></td>
 <td><code>passphrase</code></td>
-<td><code>passphrase</code>（单用户）或 <code>users</code>（多用户）</td>
+<td><code>passphrase</code>（共享口令）或 <code>users</code>（具名账号 + 角色）。自 1.10.0 起 <code>users</code> 是真正的多用户：每人只拥有并看到自己的邮箱，角色为 <code>owner</code>、<code>operator</code> 或 <code>viewer</code>。用 <code>skimmail user add</code> 创建。</td>
 </tr>
 <tr>
 <td><code>DATA_DIR</code></td>
@@ -237,6 +237,26 @@ sudo apt update
 <h2>面向开发者</h2>
 <p>从源码构建、开发模式（热重载）、VS Code 配置、build tags、测试与项目结构都在
 <strong><a href="https://github.com/lyquyduong/skimmail/blob/main/README.dev.md"><code>README.dev.md</code></a></strong>。</p>
-<h2>许可证</h2>
-<p>AGPL-3.0-or-later。贡献需签署 <a href="https://github.com/lyquyduong/skimmail/blob/main/CLA.md">CLA</a>。SPDX：<code>AGPL-3.0-or-later</code>。</p></main></body>
+<h2>许可证与版本层级</h2>
+<p><strong>SkimMail 是专有软件。</strong> 采用 <a href="LICENSE">Business Source License 1.1</a> 许可
+（Licensor：Duong Ly）。源代码为私有；仅向用户分发<strong>编译后的二进制</strong>。
+SPDX：<code>BUSL-1.1</code>。</p>
+<h3>三个层级</h3>
+<ul>
+<li><strong>Community Edition</strong> —— 免费，10 个账户 / 1 个登录账号 / 3 个代理 / 2 个分组 / 5 GB 存储（无需许可证密钥）</li>
+<li><strong>Sponsor Edition</strong> —— 面向 GitHub Sponsors / 赞助者的答谢（25 个账户 / 3 个登录账号 / 5 个代理 / 5 个分组 / 15 GB）</li>
+<li><strong>Pro Edition</strong> —— 付费许可证密钥；账户/代理/分组/存储均无限制，并包含未来的 <strong>AI Triage</strong> 服务</li>
+</ul>
+<p>详情见 <a href="https://github.com/lyquyduong/skimmail/blob/main/COMMERCIAL-TERMS.md"><code>COMMERCIAL-TERMS.md</code></a>；完整说明（英文 + 越南语）见
+<a href="https://github.com/lyquyduong/skimmail/blob/main/docs/LICENSING.md"><code>docs/LICENSING.md</code></a>。许可证相关问题见 <a href="https://github.com/lyquyduong/skimmail/blob/main/SECURITY.md"><code>SECURITY.md</code></a>。</p>
+<h3>许可证转换（2030 年）</h3>
+<p><strong>2030 年 7 月 23 日</strong>之后，SkimMail 将自动转为 <strong>AGPL-3.0-or-later</strong>。
+在此日期之前，源代码仍为专有。</p>
+<h3>其他声明</h3>
+<ul>
+<li><strong>商标：</strong> “SkimMail”名称不在源代码许可证的涵盖范围内（见 <a href="https://github.com/lyquyduong/skimmail/blob/main/TRADEMARK.md"><code>TRADEMARK.md</code></a>）</li>
+<li><strong>第三方依赖：</strong> 许可证清单见 <a href="NOTICE"><code>NOTICE</code></a></li>
+<li><strong>隐私：</strong> 不回传（no phone-home）；Pro/Sponsor 的数据收集为可选（见 <a href="https://github.com/lyquyduong/skimmail/blob/main/PRIVACY.md"><code>PRIVACY.md</code></a>）</li>
+<li><strong>参与贡献：</strong> 需签署 <a href="https://github.com/lyquyduong/skimmail/blob/main/CLA.md">CLA</a></li>
+</ul></main></body>
 </html>

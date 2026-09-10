@@ -37,7 +37,7 @@ ul,ol { padding-left:1.5em; }</style>
 tự host, nhẹ — lõi IMAP + OAuth Gmail/Outlook — đóng gói thành <strong>một file binary
 Go duy nhất</strong> nhúng sẵn React SPA. <strong>Không cần dịch vụ ngoài</strong>.</p>
 </blockquote>
-<p><strong>Giấy phép:</strong> AGPL-3.0-or-later (+ CLA, xem <a href="https://github.com/lyquyduong/skimmail/blob/main/CLA.md"><code>CLA.md</code></a>) · <strong>Bảo mật:</strong> <a href="https://github.com/lyquyduong/skimmail/blob/main/SECURITY.md"><code>SECURITY.md</code></a></p>
+<p><strong>Giấy phép:</strong> Business Source License 1.1 (phần mềm độc quyền; chuyển sang AGPL năm 2030) · <strong>Bảo mật:</strong> <a href="https://github.com/lyquyduong/skimmail/blob/main/SECURITY.md"><code>SECURITY.md</code></a></p>
 <blockquote>
 <p><strong>Đây là bản <code>0.1.0</code></strong> — trình đọc email tập trung + nhóm tài khoản. Các phần
 khác (AI, thông báo, lưu trữ cắm được, tự cập nhật trong app) nằm trong roadmap.</p>
@@ -151,7 +151,7 @@ credentials bên dưới + <code>BASE_URL</code> công khai.</p>
 <tr>
 <td><code>AUTH_MODE</code></td>
 <td><code>passphrase</code></td>
-<td><code>passphrase</code> (1 user) hoặc <code>users</code> (đa user)</td>
+<td><code>passphrase</code> (một mật khẩu chung) hoặc <code>users</code> (tài khoản có tên + phân quyền). Từ 1.10.0 <code>users</code> là đa người dùng thật: mỗi người sở hữu hộp thư của mình và không thấy của người khác, vai trò là <code>owner</code>, <code>operator</code> hoặc <code>viewer</code>. Tạo bằng <code>skimmail user add</code>.</td>
 </tr>
 <tr>
 <td><code>DATA_DIR</code></td>
@@ -246,6 +246,27 @@ rồi xoá binary và thư mục dữ liệu (<code>DATA_DIR</code>, mặc đị
 <h2>Cho lập trình viên</h2>
 <p>Build từ mã nguồn, chế độ dev (hot reload), thiết lập VS Code, build tags, tests và
 bố cục dự án nằm ở <strong><a href="https://github.com/lyquyduong/skimmail/blob/main/README.dev.md"><code>README.dev.md</code></a></strong>.</p>
-<h2>Giấy phép</h2>
-<p>AGPL-3.0-or-later. Đóng góp cần ký <a href="https://github.com/lyquyduong/skimmail/blob/main/CLA.md">CLA</a>. SPDX: <code>AGPL-3.0-or-later</code>.</p></main></body>
+<h2>Giấy phép &amp; các bậc</h2>
+<p><strong>SkimMail là phần mềm độc quyền (proprietary).</strong> Được cấp phép theo
+<a href="LICENSE">Business Source License 1.1</a> (Licensor: Duong Ly). Mã nguồn là
+private; chỉ <strong>binary đã build</strong> được phân phối cho người dùng.
+SPDX: <code>BUSL-1.1</code>.</p>
+<h3>Ba bậc (tier)</h3>
+<ul>
+<li><strong>Community Edition</strong> — Miễn phí, 10 tài khoản / 1 tài khoản đăng nhập / 3 proxy / 2 nhóm / 5 GB lưu trữ (không cần license key)</li>
+<li><strong>Sponsor Edition</strong> — Lời cảm ơn dành cho người ủng hộ qua GitHub Sponsors / backer (25 tài khoản / 3 tài khoản đăng nhập / 5 proxy / 5 nhóm / 15 GB)</li>
+<li><strong>Pro Edition</strong> — License key trả phí; không giới hạn tài khoản/proxy/nhóm/dung lượng + dịch vụ <strong>AI Triage</strong> trong tương lai</li>
+</ul>
+<p>Chi tiết: <a href="https://github.com/lyquyduong/skimmail/blob/main/COMMERCIAL-TERMS.md"><code>COMMERCIAL-TERMS.md</code></a>. Giải thích đầy đủ (EN + VI):
+<a href="https://github.com/lyquyduong/skimmail/blob/main/docs/LICENSING.md"><code>docs/LICENSING.md</code></a>. Thắc mắc về giấy phép: xem <a href="https://github.com/lyquyduong/skimmail/blob/main/SECURITY.md"><code>SECURITY.md</code></a>.</p>
+<h3>Chuyển đổi giấy phép (2030)</h3>
+<p>Sau ngày <strong>23/07/2030</strong>, SkimMail sẽ tự động chuyển sang <strong>AGPL-3.0-or-later</strong>.
+Trước ngày đó, mã nguồn vẫn là độc quyền.</p>
+<h3>Ghi chú khác</h3>
+<ul>
+<li><strong>Thương hiệu:</strong> tên "SkimMail" không nằm trong phạm vi giấy phép mã nguồn (xem <a href="https://github.com/lyquyduong/skimmail/blob/main/TRADEMARK.md"><code>TRADEMARK.md</code></a>)</li>
+<li><strong>Thư viện bên thứ ba:</strong> danh sách giấy phép trong <a href="NOTICE"><code>NOTICE</code></a></li>
+<li><strong>Quyền riêng tư:</strong> không phone-home; dữ liệu thu thập cho Pro/Sponsor là tùy chọn (xem <a href="https://github.com/lyquyduong/skimmail/blob/main/PRIVACY.md"><code>PRIVACY.md</code></a>)</li>
+<li><strong>Đóng góp:</strong> cần ký <a href="https://github.com/lyquyduong/skimmail/blob/main/CLA.md">CLA</a></li>
+</ul></main></body>
 </html>

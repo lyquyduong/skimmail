@@ -1,60 +1,60 @@
 {
     "plugins": {
         "skimmail-tunnel-ts": {
-            "version": "1.9.1",
+            "version": "1.10.0",
             "kind": "skimmail",
             "artifacts": {
                 "linux/amd64": {
-                    "url": "https://github.com/lyquyduong/skimmail/releases/download/v1.9.1/skimmail-tunnel-ts_v1.9.1_linux_amd64.tar.gz",
-                    "sha256": "54bb8263035454f98a5700700acc8bc910b6854922f342f7cb9453b9862587ab",
+                    "url": "https://github.com/lyquyduong/skimmail/releases/download/v1.10.0/skimmail-tunnel-ts_v1.10.0_linux_amd64.tar.gz",
+                    "sha256": "1ebfde150e7bcc4e53174e00ad798663246f15ad0ae27eef2f86d1c7b9c1eac9",
                     "format": "tgz",
                     "member": "skimmail-tunnel-ts"
                 },
                 "linux/arm64": {
-                    "url": "https://github.com/lyquyduong/skimmail/releases/download/v1.9.1/skimmail-tunnel-ts_v1.9.1_linux_arm64.tar.gz",
-                    "sha256": "4065dcd702348ae63b19c481a92a3cc1d374c9d7c732132c84c009ddc20aafa1",
+                    "url": "https://github.com/lyquyduong/skimmail/releases/download/v1.10.0/skimmail-tunnel-ts_v1.10.0_linux_arm64.tar.gz",
+                    "sha256": "57df264b62fb76a434f32d50a1df9af101ba072c1fb5d0ce432016e12ea310f9",
                     "format": "tgz",
                     "member": "skimmail-tunnel-ts"
                 },
                 "darwin/amd64": {
-                    "url": "https://github.com/lyquyduong/skimmail/releases/download/v1.9.1/skimmail-tunnel-ts_v1.9.1_darwin_amd64.tar.gz",
-                    "sha256": "bcd50a35795c140293acbc20c596efb8444398e923a0fff604661ac877d54e34",
+                    "url": "https://github.com/lyquyduong/skimmail/releases/download/v1.10.0/skimmail-tunnel-ts_v1.10.0_darwin_amd64.tar.gz",
+                    "sha256": "7b5335366a9f3d4d2ae8c2161a9c0ce19f52e227a472bafdb1e4778fb323c61e",
                     "format": "tgz",
                     "member": "skimmail-tunnel-ts"
                 },
                 "darwin/arm64": {
-                    "url": "https://github.com/lyquyduong/skimmail/releases/download/v1.9.1/skimmail-tunnel-ts_v1.9.1_darwin_arm64.tar.gz",
-                    "sha256": "0fb8f6943308db5160b346c0fb004a09383730787b91d1ecfff3c87396707a05",
+                    "url": "https://github.com/lyquyduong/skimmail/releases/download/v1.10.0/skimmail-tunnel-ts_v1.10.0_darwin_arm64.tar.gz",
+                    "sha256": "00242d514495bd7404a2225b8647154e56fcb2a399f1edf9763112de81c23e81",
                     "format": "tgz",
                     "member": "skimmail-tunnel-ts"
                 }
             }
         },
         "skimmail-egress-wg": {
-            "version": "1.9.1",
+            "version": "1.10.0",
             "kind": "skimmail",
             "artifacts": {
                 "linux/amd64": {
-                    "url": "https://github.com/lyquyduong/skimmail/releases/download/v1.9.1/skimmail-egress-wg_v1.9.1_linux_amd64.tar.gz",
-                    "sha256": "56aa496d73915a32808c9f3371d1f497d72c98257d4123a7552743c4e1997cb1",
+                    "url": "https://github.com/lyquyduong/skimmail/releases/download/v1.10.0/skimmail-egress-wg_v1.10.0_linux_amd64.tar.gz",
+                    "sha256": "69b5634b464bf4d1038c2824db802b33d1742500fa1a1fd354af5ae9b23632c5",
                     "format": "tgz",
                     "member": "skimmail-egress-wg"
                 },
                 "linux/arm64": {
-                    "url": "https://github.com/lyquyduong/skimmail/releases/download/v1.9.1/skimmail-egress-wg_v1.9.1_linux_arm64.tar.gz",
-                    "sha256": "ce22cceae551d65ada55782b09c11aeef64e976093ade4fae330eff3d2edac25",
+                    "url": "https://github.com/lyquyduong/skimmail/releases/download/v1.10.0/skimmail-egress-wg_v1.10.0_linux_arm64.tar.gz",
+                    "sha256": "eeb83c30f4211c8f17763d826269d790d4cd7638846be68598c293f2e731e080",
                     "format": "tgz",
                     "member": "skimmail-egress-wg"
                 },
                 "darwin/amd64": {
-                    "url": "https://github.com/lyquyduong/skimmail/releases/download/v1.9.1/skimmail-egress-wg_v1.9.1_darwin_amd64.tar.gz",
-                    "sha256": "a7fc2c6bc4aff3f0844ef8b0567bb0f603d20d9c74759d13fdacb3f7cc917127",
+                    "url": "https://github.com/lyquyduong/skimmail/releases/download/v1.10.0/skimmail-egress-wg_v1.10.0_darwin_amd64.tar.gz",
+                    "sha256": "2f09e5772457b324f62f95d1a82bec2cc897bc199ae188b10fe13f6ef4d1c8fe",
                     "format": "tgz",
                     "member": "skimmail-egress-wg"
                 },
                 "darwin/arm64": {
-                    "url": "https://github.com/lyquyduong/skimmail/releases/download/v1.9.1/skimmail-egress-wg_v1.9.1_darwin_arm64.tar.gz",
-                    "sha256": "95ad8e26498ae5a77ea037a6cc5f973a911357558c9a5e81a583923f3e331c0b",
+                    "url": "https://github.com/lyquyduong/skimmail/releases/download/v1.10.0/skimmail-egress-wg_v1.10.0_darwin_arm64.tar.gz",
+                    "sha256": "1791d48203e843fa2b8d2214043f806a5833faa1db6115ec4d993c1e9161803e",
                     "format": "tgz",
                     "member": "skimmail-egress-wg"
                 }
