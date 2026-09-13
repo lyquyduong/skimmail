@@ -1,0 +1,81 @@
+Business Source License 1.1
+
+Licensor:             Solutions101 (S101)
+Licensed Work:        SkimMail
+                      The Licensed Work is (c) 2024-2026 Solutions101 (S101).
+Change Date:          2030-07-23
+Change License:       GNU Affero General Public License v3.0 or later
+
+Notice
+
+The Business Source License (this document, or the "License") is not an Open
+Source license. However, the Licensed Work will eventually be made available
+under an Open Source License, as stated in this License.
+
+================================================================================
+
+Terms of the Business Source License 1.1
+=========================================
+
+The Licensor hereby grants you the right to copy, modify, create derivative
+works, redistribute, and make non-production use of the Licensed Work. The
+Licensor may make Additional License Terms for any particular Licensed Work
+at the time of its release.
+
+If the Licensor includes an Additional License Terms with a particular copy of
+the Licensed Work, those terms will govern in addition to the terms of this
+License for that copy.
+
+Restrictions
+============
+
+You may not offer the Licensed Work to third parties on a hosted or embedded
+basis which includes features or services that compete with any of the
+Licensor's products or services that provide the same or substantially the
+same functionality as part of the Licensed Work (the "Competing Product or
+Service").
+
+For clarity: you may not:
+
+1. Provide SkimMail, or a substantially similar email reader, as a hosted
+   (SaaS), cloud, or embedded service to third parties.
+2. Offer SkimMail as part of a commercial offering where the primary value
+   is the email reading / account management / multi-account features that
+   SkimMail provides.
+
+You may:
+
+1. Use SkimMail for your own internal use, even if your organization is
+   commercial.
+2. Use SkimMail to build features that are not directly competitive with
+   SkimMail's core email-reading function.
+3. Contribute to the development of SkimMail under the Contributor License
+   Agreement (see CLA.md).
+
+Change of License After Change Date
+====================================
+
+After the Change Date (2030-07-23), the Licensor hereby grants you the right
+to use the Licensed Work under the terms of the GNU Affero General Public
+License v3.0 or later (AGPLv3+) as published by the Free Software Foundation.
+
+This means that on or after 2030-07-23, you may copy, modify, distribute, and
+use the Licensed Work under the terms of AGPLv3+, subject to the conditions
+and restrictions of that license.
+
+Disclaimer
+==========
+
+THE LICENSED WORK IS PROVIDED ON AN "AS-IS" BASIS. LICENSOR HEREBY DISCLAIMS
+ALL WARRANTIES AND CONDITIONS, EXPRESS, IMPLIED, STATUTORY, OR OTHERWISE, AND
+SPECIFICALLY DISCLAIMS ANY IMPLIED WARRANTY OF MERCHANTABILITY, FITNESS FOR A
+PARTICULAR PURPOSE, AND NONINFRINGEMENT.
+
+Limitation of Liability
+=======================
+
+IN NO EVENT WILL LICENSOR BE LIABLE TO ANY PARTY FOR ANY DAMAGES OF ANY KIND
+(INCLUDING, BUT NOT LIMITED TO, ANY DIRECT, INDIRECT, SPECIAL, INCIDENTAL,
+PUNITIVE, OR CONSEQUENTIAL DAMAGES) ARISING OUT OF THE USE OF OR INABILITY TO
+USE THIS LICENSED WORK, EVEN IF THE LICENSOR HAS BEEN ADVISED OF THE
+POSSIBILITY OF SUCH DAMAGES.
