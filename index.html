@@ -37,20 +37,31 @@ ul,ol { padding-left:1.5em; }</style>
 email reader — IMAP core + Gmail/Outlook OAuth — packaged as a <strong>single Go
 binary</strong> that embeds a React SPA. No external services required.</p>
 </blockquote>
-<p><strong>License:</strong> Business Source License 1.1 (proprietary; converts to AGPL in 2030) · <strong>Security:</strong> <a href="https://github.com/lyquyduong/skimmail/blob/main/SECURITY.md"><code>SECURITY.md</code></a></p>
+<p><strong>License:</strong> Business Source License 1.1 (proprietary; converts to AGPL in 2030) · <strong>Security:</strong> <a href="https://github.com/lyquyduong/skimmail/blob/main/SECURITY.md"><code>SECURITY.md</code></a> · <strong>Docs:</strong> <a href="https://github.com/lyquyduong/skimmail/wiki">Wiki</a></p>
 <blockquote>
-<p><strong>This is the current release</strong> — a focused, self-hosted email reader with
-multi-account support, account groups, and pluggable storage.
-More (AI Triage, in-app updates) is on the roadmap.</p>
+<p><strong>Everything below is shipped.</strong> Multi-account mail, per-account egress, rules
+and alerts, notifications, backup &amp; restore, plugins, remote access and
+multi-user roles are all in the current release — <strong>AI Triage is the only
+headline feature still on the roadmap</strong>. Release-by-release detail:
+<a href="https://github.com/lyquyduong/skimmail/blob/main/CHANGELOG.md"><code>CHANGELOG.md</code></a>.</p>
 </blockquote>
+<!-- HERO SCREENSHOT PLACEHOLDER — intentionally empty.
+     Blocked on SKIMMAIL-166 (screenshot-safe mode, slotted 1.12.0): a hero shot
+     needs realistic mail and no real addresses. Do NOT use docs/screenshot-hero.png
+     here — it is a v0.1.0 capture showing one account and an empty third pane,
+     which contradicts the multi-account, 3-pane pitch above. -->
+
 <hr />
 <h2>Features</h2>
+<h3>Read</h3>
 <ul>
-<li><strong>Multi-account IMAP</strong> read — add accounts with host/port + app-password.</li>
-<li><strong>OAuth</strong> for Gmail &amp; Outlook (XOAUTH2 over IMAP) — <em>optional, needs your own
-  Google/Azure app credentials</em>.</li>
+<li><strong>Multi-account IMAP</strong> — add accounts with host/port + app-password. <strong>OAuth</strong>
+  for Gmail &amp; Outlook (XOAUTH2 over IMAP) is optional and uses your own
+  Google/Azure app credentials.</li>
 <li><strong>Unified inbox</strong> across all accounts, lightweight <strong>threading</strong>, <strong>3-pane UI</strong>
-  with a sandboxed reading pane (HTML sanitized, remote images blocked).</li>
+  with a sandboxed reading pane. Remote images stay blocked until you ask for
+  them — and then <strong>SkimMail fetches them, not your browser</strong>, through that
+  account's own egress, so the sender's server never sees you.</li>
 <li><strong>Account groups</strong> — organize your accounts into named, colour-coded groups and
   read each group's mail together.</li>
 <li><strong>Real-time</strong> new-mail push via IMAP <strong>IDLE → WebSocket</strong>, with a poll-fallback
@@ -62,9 +73,70 @@ More (AI Triage, in-app updates) is on the roadmap.</p>
 <li><strong>Keyboard-first</strong> (Superhuman-style) + <strong>Focus/triage mode</strong> + <strong>command palette</strong>
   (⌘K) + <strong>PWA</strong> (installable, offline shell) + <strong>i18n</strong> (English / Tiếng Việt /
   中文, dark &amp; light themes).</li>
-<li><strong>Always-on background sync</strong> and a <strong>security</strong> layer: login rate-limit +
-  lockout, CSRF/origin checks, SSRF guard, encrypted credentials at rest, and an
-  audit log.</li>
+</ul>
+<h3>Give every account its own way out</h3>
+<ul>
+<li><strong>Per-account egress.</strong> Route each account's mail through its own <strong>SOCKS5
+  proxy</strong>, <strong>HTTP proxy</strong>, <strong>embedded WireGuard tunnel</strong>, or a <strong>serverless
+  relay</strong> you deploy yourself — paste one file into Cloudflare Workers, or run
+  <code>skimmail relay</code> in a container. Work and personal never have to share an exit
+  IP. Mail clients normally leave this to external plumbing (<code>wireproxy</code>, a
+  per-app VPN, a second container); here it is a field on the account.</li>
+<li><strong>Proof, not just configuration.</strong> Every connection reports the <strong>public IP it
+  actually leaves from</strong> — proxy, tunnel, relay and Direct alike — and SkimMail
+  <strong>warns you when two accounts meant to be separate arrive from the same
+  address</strong>. <strong>Test</strong> opens a real connection through that egress and reports
+  latency.</li>
+<li><strong>Fail-closed.</strong> Switching a connection off never drops its accounts back to a
+  plain one: they go <strong>degraded</strong> and stop syncing until you pick <strong>Direct</strong> on
+  purpose — so a disabled egress cannot quietly leak your home IP.</li>
+</ul>
+<h3>Automate and operate</h3>
+<ul>
+<li><strong>Rules &amp; Signals</strong> — match incoming mail on sender, subject (text or regex),
+  account or group, or "looks like a one-time code", then notify a channel, toast
+  in-app, send a push, or apply a <strong>tag</strong> you can click to filter by. One-time
+  codes get an <strong>OTP</strong> chip that copies the code; the code itself is never stored.</li>
+<li><strong>Notifications, six channels</strong> — a plain <strong>webhook</strong>, <strong>Telegram</strong>, <strong>Slack</strong>,
+  <strong>Discord</strong>, <strong>Microsoft Teams</strong> or <strong>Google Chat</strong>, as many as you like, each
+  with its own <strong>Send test</strong> — plus <strong>Web Push</strong> to browser and phone (standard
+  VAPID keys SkimMail generates itself; no Firebase account), with quiet hours,
+  content privacy and a per-account toggle.</li>
+<li><strong>Sync health</strong> — an account that keeps failing <strong>stops on its own</strong> instead of
+  hammering your provider; a board shows every account as Stopped / Degraded /
+  Paused with one-click Resume, Retry and Stop, and alerts fire when a sync stops,
+  a proxy or tunnel goes down, or an OAuth sign-in is about to expire.</li>
+<li><strong>Backup &amp; restore</strong> — an encrypted snapshot of the whole instance (accounts,
+  mail and settings) that restores onto any SkimMail server, even one on a
+  different database — plus scheduled backups to a local folder or any
+  S3-compatible storage (MinIO, Cloudflare R2, Backblaze B2, Wasabi, AWS S3).</li>
+<li><strong>Remote access without port-forwarding</strong> — publish SkimMail through a
+  <strong>Cloudflare Tunnel</strong> or <strong>Tailscale</strong>, with a QR code to open it on your phone.
+  Those helpers and the WireGuard engine are <strong>plugins downloaded on demand</strong>
+  against a signed, SHA256-pinned index; install, update and remove them from
+  <strong>Settings ▸ Plugins</strong>.</li>
+<li><strong>Configured in the browser, not a text editor</strong> — public URL, OAuth apps and
+  sign-in mode are settings inside the app, and anything set in the environment
+  still wins and shows as locked, naming the variable to remove. <strong>In-app
+  self-update</strong> installs a new release in one click on binary/apt installs, and
+  <strong>Settings ▸ Logs</strong> gives a live log view, runtime log level and rotation.</li>
+</ul>
+<h3>Security &amp; multi-user</h3>
+<ul>
+<li><strong>Multi-user with real separation</strong> — <code>AUTH_MODE=users</code> gives each person their
+  own accounts, mail and settings, invisible to everyone else, as <strong>owner</strong>,
+  <strong>operator</strong> or <strong>viewer</strong>; create them with <code>skimmail user add</code>. A single-user
+  instance stays exactly as simple as it was.</li>
+<li><strong>Security layer</strong> — a one-time <strong>claim code</strong> gates the very first sign-in;
+  credentials, OAuth tokens and cached message bodies are <strong>encrypted at rest</strong>
+  (AES-256-GCM); plus login rate-limit + lockout, 2FA, a server-enforced idle
+  lock, CSRF/origin checks, an SSRF guard, signed releases and a signed plugin
+  index, and an append-only audit log.</li>
+<li><strong>Yours, and it stays that way</strong> — one Go binary with the React SPA inside,
+  SQLite built in (PostgreSQL and MySQL optional; MySQL is experimental),
+  <strong>always-on background sync</strong>, and <strong>no phone-home</strong>. <strong>Community Edition is
+  free</strong>; Sponsor and Pro keys are verified <strong>entirely offline</strong>, and a key
+  expiring never takes away anything you already added.</li>
 </ul>
 <h2>Requirements</h2>
 <p>Just <strong>Docker</strong> — SQLite is built in, no external services needed.
@@ -73,18 +145,18 @@ More (AI Triage, in-app updates) is on the roadmap.</p>
 <h2>Quick start</h2>
 <p>No source needed — grab the published compose file (it pulls the prebuilt image):</p>
 <pre><code class="language-bash">curl -fsSLO https://lyquyduong.github.io/skimmail/docker-compose.yml
-docker compose up -d                       # → http://localhost:8080  (SQLite + filesystem)
-# docker compose --profile wireguard up -d # SkimMailWG edition → http://localhost:8082
+docker compose up -d      # → http://localhost:8080  (SQLite + filesystem)
 </code></pre>
 <p>Or run the published image directly (distroless + non-root; data in the <code>/data</code> volume):</p>
 <pre><code class="language-bash">docker run -d -p 8080:8080 -v skimmail-data:/data \
   -e AUTH_MODE=passphrase ghcr.io/lyquyduong/skimmail:latest
 </code></pre>
-<p><strong>One package, everything included.</strong> There used to be a separate <code>skimmail-wg</code>
-edition for <strong>embedded WireGuard egress</strong> (routing an account through an in-app
-WireGuard tunnel, §21). Since 1.4.3 that lives in the default build: the tunnel
-engine is a SHA256-pinned plugin SkimMail downloads when you first enable it, so
-there is nothing extra to install and no second image to choose.</p>
+<p><strong>One image, one package.</strong> Embedded WireGuard egress, PostgreSQL, MySQL and S3
+support are all in the default build — the WireGuard engine arrives as a
+SHA256-pinned plugin SkimMail downloads the first time you add a tunnel, so there
+is nothing extra to install and no second image to choose. The separate
+<code>skimmail-wg</code> edition was retired in 1.7.0; if you still have that apt package,
+<code>apt remove skimmail-wg</code> is safe.</p>
 <h3>Install on Ubuntu / Debian (apt)</h3>
 <pre><code class="language-bash">curl -fsSL https://lyquyduong.github.io/skimmail/apt/skimmail.gpg \
   | sudo tee /usr/share/keyrings/skimmail.gpg &gt;/dev/null
@@ -137,12 +209,21 @@ real-time over WebSocket.</p>
 <li><strong>Keyboard</strong> — <code>?</code> shows all shortcuts: <code>j</code>/<code>k</code> move · <code>Enter</code>/<code>o</code> open ·
   <code>e</code> archive · <code>#</code> delete · <code>s</code> snooze · <code>x</code> select · <code>Space</code> quick-peek ·
   <code>/</code> search · <strong><code>f</code> Focus mode</strong> ("Get to Zero") · <code>Esc</code> close.</li>
+<li><strong>Tags</strong> — a rule can tag matching mail; click a tag chip in the list to filter
+  by it.</li>
+<li><strong>Images</strong> — a blocked-image banner offers <strong>Show images</strong>, plus <strong>Always</strong> or
+  <strong>Never from this sender</strong> (both reversible; the instance-wide switch is in
+  <strong>Settings ▸ Security</strong>).</li>
 <li><strong>PWA</strong> — install from the browser address bar; the app shell works offline.</li>
 <li><strong>Language / theme</strong> — switch EN / VI / 中 and dark/light in the sidebar.</li>
 </ul>
 <hr />
 <h2>Configuration</h2>
-<p>Config is via environment variables (12-factor). See <a href="https://github.com/lyquyduong/skimmail/blob/main/.env.example"><code>.env.example</code></a>.</p>
+<p>Config is via environment variables (12-factor) — see <a href="https://github.com/lyquyduong/skimmail/blob/main/.env.example"><code>.env.example</code></a>.
+Since 1.9.0 most settings are also editable in the app (<strong>Settings</strong>), and a value
+set in the environment always wins and shows there as locked. The full reference —
+every variable, the config planes, and what overrides what — is in the
+<a href="https://github.com/lyquyduong/skimmail/wiki/Configuration">wiki ▸ Configuration</a>.</p>
 <table>
 <thead>
 <tr>
@@ -221,11 +302,13 @@ real-time over WebSocket.</p>
 </table>
 <hr />
 <h2>Security</h2>
-<p>Credentials and OAuth tokens are encrypted at rest (AES-256-GCM). The server
+<p>Credentials, OAuth tokens and cached message bodies are encrypted at rest
+(AES-256-GCM). The first sign-in is gated by a one-time claim code. The server
 applies login rate-limiting + lockout, CSRF/origin checks, an SSRF guard on
-outbound fetches, strict security headers + a sandboxed email iframe, and an
-append-only audit log (<code>GET /api/audit</code>). See <a href="https://github.com/lyquyduong/skimmail/blob/main/SECURITY.md"><code>SECURITY.md</code></a> for the
-full posture and how to report a vulnerability.</p>
+outbound fetches, strict security headers + a sandboxed email iframe, a
+server-enforced idle lock, and an append-only audit log (<code>GET /api/audit</code>). See
+<a href="https://github.com/lyquyduong/skimmail/blob/main/SECURITY.md"><code>SECURITY.md</code></a> for the full posture and how to report a
+vulnerability.</p>
 <h2>Uninstall (complete removal)</h2>
 <p>Uninstalling never deletes your data by itself — accounts, the mail cache, and the
 encryption <strong>master key</strong> live in the Docker volume or <code>/var/lib/skimmail</code>. The
@@ -257,14 +340,14 @@ delete the binary and its data dir (<code>DATA_DIR</code>, default <code>./data<
 <p>Building from source, dev mode (hot reload), VS Code setup, build tags, tests, and
 project layout are in <strong><a href="https://github.com/lyquyduong/skimmail/blob/main/README.dev.md"><code>README.dev.md</code></a></strong>.</p>
 <h2>License &amp; Tiers</h2>
-<p><strong>SkimMail is proprietary software.</strong> It is licensed under the <a href="LICENSE">Business Source License 1.1</a> (Licensor: Solutions101 (S101)). The source code is private; only compiled binaries are distributed to users.</p>
+<p><strong>SkimMail is proprietary software.</strong> It is licensed under the <a href="LICENSE">Business Source License 1.1</a> (Licensor: Solutions101 (S101)). The source code is private; only compiled binaries are distributed to users. SPDX: <code>BUSL-1.1</code>.</p>
 <h3>Three Tiers</h3>
 <ul>
 <li><strong>Community Edition</strong> — Free, 10 accounts / 1 sign-in / 3 proxies / 2 groups / 5 GB storage (no license key needed)</li>
 <li><strong>Sponsor Edition</strong> — Thank-you for GitHub Sponsors / backers (25 accounts / 3 sign-ins / 5 proxies / 5 groups / 15 GB)</li>
 <li><strong>Pro Edition</strong> — Paid license key; unlimited accounts/proxies/groups/storage + future <strong>AI Triage</strong> service</li>
 </ul>
-<p>See <a href="https://github.com/lyquyduong/skimmail/blob/main/COMMERCIAL-TERMS.md"><code>COMMERCIAL-TERMS.md</code></a> for details. Questions about licensing: see <a href="https://github.com/lyquyduong/skimmail/blob/main/SECURITY.md"><code>SECURITY.md</code></a>.</p>
+<p>See <a href="https://github.com/lyquyduong/skimmail/blob/main/COMMERCIAL-TERMS.md"><code>COMMERCIAL-TERMS.md</code></a> for details, or the full explainer (EN + VI) in <a href="https://github.com/lyquyduong/skimmail/blob/main/docs/LICENSING.md"><code>docs/LICENSING.md</code></a>. Questions about licensing: see <a href="https://github.com/lyquyduong/skimmail/blob/main/SECURITY.md"><code>SECURITY.md</code></a>.</p>
 <h3>License Conversion (2030)</h3>
 <p>After July 23, 2030, SkimMail will automatically convert to <strong>AGPL-3.0-or-later</strong>. Until then, source code remains proprietary.</p>
 <h3>Other Notices</h3>

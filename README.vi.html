@@ -37,19 +37,31 @@ ul,ol { padding-left:1.5em; }</style>
 tự host, nhẹ — lõi IMAP + OAuth Gmail/Outlook — đóng gói thành <strong>một file binary
 Go duy nhất</strong> nhúng sẵn React SPA. <strong>Không cần dịch vụ ngoài</strong>.</p>
 </blockquote>
-<p><strong>Giấy phép:</strong> Business Source License 1.1 (phần mềm độc quyền; chuyển sang AGPL năm 2030) · <strong>Bảo mật:</strong> <a href="https://github.com/lyquyduong/skimmail/blob/main/SECURITY.md"><code>SECURITY.md</code></a></p>
+<p><strong>Giấy phép:</strong> Business Source License 1.1 (phần mềm độc quyền; chuyển sang AGPL năm 2030) · <strong>Bảo mật:</strong> <a href="https://github.com/lyquyduong/skimmail/blob/main/SECURITY.md"><code>SECURITY.md</code></a> · <strong>Tài liệu:</strong> <a href="https://github.com/lyquyduong/skimmail/wiki/Home-vi">Wiki</a></p>
 <blockquote>
-<p><strong>Đây là bản <code>0.1.0</code></strong> — trình đọc email tập trung + nhóm tài khoản. Các phần
-khác (AI, thông báo, lưu trữ cắm được, tự cập nhật trong app) nằm trong roadmap.</p>
+<p><strong>Mọi thứ bên dưới đều đã phát hành.</strong> Mail đa tài khoản, egress riêng cho từng
+tài khoản, rules và cảnh báo, thông báo, sao lưu &amp; khôi phục, plugin, remote
+access và đa người dùng — tất cả đã có trong bản hiện tại; <strong>AI Triage là tính
+năng lớn duy nhất còn nằm trong roadmap</strong>. Chi tiết từng bản phát hành:
+<a href="https://github.com/lyquyduong/skimmail/blob/main/CHANGELOG.md"><code>CHANGELOG.md</code></a>.</p>
 </blockquote>
+<!-- HERO SCREENSHOT PLACEHOLDER — intentionally empty.
+     Blocked on SKIMMAIL-166 (screenshot-safe mode, slotted 1.12.0): a hero shot
+     needs realistic mail and no real addresses. Do NOT use docs/screenshot-hero.png
+     here — it is a v0.1.0 capture showing one account and an empty third pane,
+     which contradicts the multi-account, 3-pane pitch above. -->
+
 <hr />
 <h2>Tính năng</h2>
+<h3>Đọc</h3>
 <ul>
-<li><strong>Đọc IMAP đa tài khoản</strong> — thêm account bằng host/port + app-password.</li>
-<li><strong>OAuth</strong> cho Gmail &amp; Outlook (XOAUTH2 qua IMAP) — <em>tùy chọn, cần app credentials
-  Google/Azure của riêng bạn</em>.</li>
+<li><strong>Đọc IMAP đa tài khoản</strong> — thêm account bằng host/port + app-password. <strong>OAuth</strong>
+  cho Gmail &amp; Outlook (XOAUTH2 qua IMAP) là tùy chọn và dùng app credentials
+  Google/Azure của riêng bạn.</li>
 <li><strong>Hộp thư hợp nhất</strong> xuyên mọi tài khoản, <strong>gom luồng (threading)</strong> nhẹ, <strong>giao
-  diện 3 khung</strong> với khung đọc cô lập (sanitize HTML, chặn ảnh từ xa).</li>
+  diện 3 khung</strong> với khung đọc cô lập. Ảnh từ xa vẫn bị chặn cho tới khi bạn yêu
+  cầu — và khi đó <strong>SkimMail tải ảnh, không phải trình duyệt của bạn</strong>, đi qua
+  đúng egress của tài khoản đó, nên máy chủ người gửi không thấy bạn.</li>
 <li><strong>Nhóm tài khoản</strong> — gom nhiều tài khoản vào các nhóm có tên + màu, đọc mail theo
   từng nhóm.</li>
 <li><strong>Thời gian thực</strong>: mail mới đẩy qua IMAP <strong>IDLE → WebSocket</strong>, kèm <strong>poll dự
@@ -61,8 +73,71 @@ khác (AI, thông báo, lưu trữ cắm được, tự cập nhật trong app) 
 <li><strong>Bàn phím trước hết</strong> (kiểu Superhuman) + <strong>chế độ Focus/triage</strong> + <strong>command
   palette</strong> (⌘K) + <strong>PWA</strong> (cài được, chạy offline phần vỏ) + <strong>đa ngôn ngữ</strong>
   (English / Tiếng Việt / 中文, giao diện sáng &amp; tối).</li>
-<li><strong>Đồng bộ nền luôn-bật</strong> và lớp <strong>bảo mật</strong>: rate-limit + lockout đăng nhập, kiểm
-  tra CSRF/Origin, chống SSRF, mã hoá credential at-rest, và <strong>audit log</strong>.</li>
+</ul>
+<h3>Mỗi tài khoản một đường ra riêng</h3>
+<ul>
+<li><strong>Egress theo từng tài khoản.</strong> Định tuyến mail của mỗi tài khoản qua <strong>proxy
+  SOCKS5</strong>, <strong>proxy HTTP</strong>, <strong>tunnel WireGuard nhúng</strong>, hoặc một <strong>relay
+  serverless</strong> bạn tự triển khai — dán một file vào Cloudflare Workers, hoặc chạy
+  <code>skimmail relay</code> trong container. Công việc và cá nhân không buộc phải dùng
+  chung một IP ra. Các trình đọc mail khác thường để việc này cho công cụ ngoài
+  (<code>wireproxy</code>, VPN theo ứng dụng, một container thứ hai); ở đây nó chỉ là một ô
+  trong tài khoản.</li>
+<li><strong>Bằng chứng, không chỉ là cấu hình.</strong> Mỗi kết nối báo về <strong>địa chỉ IP công khai
+  mà nó thực sự đi ra</strong> — proxy, tunnel, relay và cả Direct — và SkimMail <strong>cảnh
+  báo khi hai tài khoản đáng lẽ tách biệt lại đi ra từ cùng một địa chỉ</strong>. Nút
+  <strong>Test</strong> mở một kết nối thật qua egress đó và báo độ trễ.</li>
+<li><strong>Fail-closed.</strong> Tắt một kết nối không bao giờ đẩy các tài khoản của nó về kết
+  nối trần: chúng chuyển sang <strong>degraded</strong> và dừng đồng bộ cho tới khi bạn chủ
+  động chọn <strong>Direct</strong> — nên một egress đã tắt không thể âm thầm lộ IP nhà bạn.</li>
+</ul>
+<h3>Tự động hoá &amp; vận hành</h3>
+<ul>
+<li><strong>Rules &amp; Signals</strong> — khớp mail đến theo người gửi, tiêu đề (chữ thường hoặc
+  regex), tài khoản hoặc nhóm, hoặc "trông giống mã một lần", rồi báo về một kênh,
+  hiện toast trong app, gửi push, hoặc gắn <strong>tag</strong> mà bạn bấm vào để lọc. Mail
+  chứa mã một lần có chip <strong>OTP</strong> để copy mã; bản thân mã không bao giờ được lưu.</li>
+<li><strong>Thông báo, sáu kênh</strong> — <strong>webhook</strong> thường, <strong>Telegram</strong>, <strong>Slack</strong>,
+  <strong>Discord</strong>, <strong>Microsoft Teams</strong> hoặc <strong>Google Chat</strong>, thêm bao nhiêu tuỳ bạn,
+  mỗi kênh có nút <strong>Send test</strong> riêng — cộng thêm <strong>Web Push</strong> về trình duyệt và
+  điện thoại (khoá VAPID chuẩn do SkimMail tự sinh; không cần tài khoản Firebase),
+  kèm giờ yên lặng, quyền riêng tư nội dung và công tắc theo từng tài khoản.</li>
+<li><strong>Sức khoẻ đồng bộ</strong> — tài khoản liên tục lỗi sẽ <strong>tự dừng</strong> thay vì dội vào nhà
+  cung cấp; một bảng hiển thị mọi tài khoản theo Stopped / Degraded / Paused với
+  Resume, Retry, Stop một chạm, và cảnh báo bắn ra khi một tài khoản ngừng đồng
+  bộ, một proxy/tunnel chết, hoặc một đăng nhập OAuth sắp hết hạn.</li>
+<li><strong>Sao lưu &amp; khôi phục</strong> — bản chụp mã hoá của toàn bộ instance (tài khoản, mail
+  và cấu hình), khôi phục được lên bất kỳ máy chủ SkimMail nào, kể cả máy dùng
+  database khác — cộng thêm sao lưu theo lịch về thư mục cục bộ hoặc bất kỳ lưu
+  trữ tương thích S3 nào (MinIO, Cloudflare R2, Backblaze B2, Wasabi, AWS S3).</li>
+<li><strong>Remote access không cần mở cổng</strong> — đưa SkimMail ra ngoài qua <strong>Cloudflare
+  Tunnel</strong> hoặc <strong>Tailscale</strong>, kèm mã QR để mở trên điện thoại. Các chương trình
+  đó và engine WireGuard là <strong>plugin tải về theo nhu cầu</strong>, đối chiếu với một chỉ
+  mục đã ký và ghim SHA256; cài, cập nhật và gỡ chúng ngay tại
+  <strong>Settings ▸ Plugins</strong>.</li>
+<li><strong>Cấu hình trong trình duyệt, không phải trong file text</strong> — URL công khai, app
+  OAuth và chế độ đăng nhập là các thiết lập ngay trong app, còn thứ gì đặt bằng
+  biến môi trường vẫn thắng và hiện ra ở đó dưới dạng khoá, kèm tên biến cần xoá.
+  <strong>Tự cập nhật trong app</strong> cài bản mới chỉ bằng một cú bấm trên các bản cài
+  binary/apt, còn <strong>Settings ▸ Logs</strong> cho xem log trực tiếp, đổi log level lúc
+  chạy và cấu hình xoay vòng.</li>
+</ul>
+<h3>Bảo mật &amp; đa người dùng</h3>
+<ul>
+<li><strong>Đa người dùng tách biệt thật sự</strong> — <code>AUTH_MODE=users</code> cho mỗi người tài khoản,
+  mail và thiết lập của riêng mình, người khác không thấy được, với vai trò
+  <strong>owner</strong>, <strong>operator</strong> hoặc <strong>viewer</strong>; tạo bằng <code>skimmail user add</code>. Instance
+  một người vẫn đơn giản y như trước.</li>
+<li><strong>Lớp bảo mật</strong> — một <strong>mã claim dùng một lần</strong> chặn ngay lần đăng nhập đầu tiên;
+  credential, token OAuth và nội dung thư đã cache đều <strong>mã hoá at-rest</strong>
+  (AES-256-GCM); cùng với rate-limit + lockout đăng nhập, 2FA, khoá màn hình khi
+  rảnh do server cưỡng chế, kiểm tra CSRF/Origin, chống SSRF, bản phát hành và chỉ
+  mục plugin đều được ký, và <strong>audit log</strong> chỉ ghi thêm.</li>
+<li><strong>Của bạn, và vẫn cứ là của bạn</strong> — một binary Go duy nhất với React SPA nhúng
+  bên trong, SQLite tích hợp sẵn (PostgreSQL và MySQL tuỳ chọn; MySQL là thử
+  nghiệm), <strong>đồng bộ nền luôn-bật</strong>, và <strong>không phone-home</strong>. <strong>Community Edition
+  miễn phí</strong>; key Sponsor và Pro được xác minh <strong>hoàn toàn offline</strong>, và key hết
+  hạn không bao giờ lấy đi thứ bạn đã thêm.</li>
 </ul>
 <h2>Yêu cầu</h2>
 <p>Chỉ cần <strong>Docker</strong> — SQLite tích hợp sẵn, không cần dịch vụ ngoài.
@@ -71,18 +146,17 @@ khác (AI, thông báo, lưu trữ cắm được, tự cập nhật trong app) 
 <h2>Bắt đầu nhanh</h2>
 <p>Không cần mã nguồn — tải file compose đã publish (nó pull sẵn image dựng sẵn):</p>
 <pre><code class="language-bash">curl -fsSLO https://lyquyduong.github.io/skimmail/docker-compose.yml
-docker compose up -d                       # → http://localhost:8080  (SQLite + filesystem)
-# docker compose --profile wireguard up -d # bản SkimMailWG → http://localhost:8082
+docker compose up -d      # → http://localhost:8080  (SQLite + filesystem)
 </code></pre>
 <p>Hoặc chạy image thuần (distroless + non-root; dữ liệu ở volume <code>/data</code>):</p>
 <pre><code class="language-bash">docker run -d -p 8080:8080 -v skimmail-data:/data \
   -e AUTH_MODE=passphrase ghcr.io/lyquyduong/skimmail:latest
 </code></pre>
-<p><strong>Một gói, có sẵn mọi thứ.</strong> Trước đây có một bản riêng <code>skimmail-wg</code> cho
-<strong>WireGuard egress nhúng</strong> (định tuyến một tài khoản qua tunnel WireGuard ngay
-trong app, §21). Từ 1.4.3 tính năng đó nằm luôn trong bản mặc định: engine tunnel
-là một plugin ghim SHA256 mà SkimMail tự tải khi bạn bật lần đầu, nên không phải
-cài thêm gì và không phải chọn image thứ hai.</p>
+<p><strong>Một image, một gói.</strong> WireGuard egress nhúng, PostgreSQL, MySQL và S3 đều nằm
+trong bản build mặc định — engine WireGuard là một plugin ghim SHA256 mà SkimMail
+tự tải lần đầu bạn thêm tunnel, nên không phải cài thêm gì và không phải chọn
+image thứ hai. Bản riêng <code>skimmail-wg</code> đã ngừng từ 1.7.0; nếu bạn còn gói apt đó,
+<code>apt remove skimmail-wg</code> là an toàn.</p>
 <h3>Cài trên Ubuntu / Debian (apt)</h3>
 <pre><code class="language-bash">curl -fsSL https://lyquyduong.github.io/skimmail/apt/skimmail.gpg \
   | sudo tee /usr/share/keyrings/skimmail.gpg &gt;/dev/null
@@ -133,12 +207,21 @@ credentials bên dưới + <code>BASE_URL</code> công khai.</p>
 <li><strong>Bàn phím</strong> — <code>?</code> hiện toàn bộ phím tắt: <code>j</code>/<code>k</code> di chuyển · <code>Enter</code>/<code>o</code> mở ·
   <code>e</code> archive · <code>#</code> delete · <code>s</code> snooze · <code>x</code> chọn · <code>Space</code> xem nhanh ·
   <code>/</code> tìm kiếm · <strong><code>f</code> chế độ Focus</strong> ("Get to Zero") · <code>Esc</code> đóng.</li>
+<li><strong>Tag</strong> — một rule có thể gắn tag cho mail khớp; bấm chip tag trong danh sách để
+  lọc theo tag đó.</li>
+<li><strong>Ảnh</strong> — banner ảnh bị chặn có <strong>Show images</strong>, kèm <strong>Always</strong> hoặc <strong>Never
+  from this sender</strong> (đều đảo ngược được; công tắc cho cả instance nằm ở
+  <strong>Settings ▸ Bảo mật</strong>).</li>
 <li><strong>PWA</strong> — cài từ thanh địa chỉ trình duyệt; phần vỏ app chạy offline.</li>
 <li><strong>Ngôn ngữ / giao diện</strong> — đổi EN / VI / 中 và sáng/tối ở sidebar.</li>
 </ul>
 <hr />
 <h2>Cấu hình</h2>
-<p>Cấu hình qua biến môi trường (12-factor). Xem <a href="https://github.com/lyquyduong/skimmail/blob/main/.env.example"><code>.env.example</code></a>.</p>
+<p>Cấu hình qua biến môi trường (12-factor) — xem <a href="https://github.com/lyquyduong/skimmail/blob/main/.env.example"><code>.env.example</code></a>.
+Từ 1.9.0 phần lớn thiết lập cũng sửa được ngay trong app (<strong>Settings</strong>), và giá trị
+đặt bằng biến môi trường luôn thắng, hiện ở đó dưới dạng khoá. Tham chiếu đầy đủ —
+mọi biến, các mặt phẳng cấu hình và thứ gì đè lên thứ gì — nằm ở
+<a href="https://github.com/lyquyduong/skimmail/wiki/Configuration-vi">wiki ▸ Cấu hình</a>.</p>
 <table>
 <thead>
 <tr>
@@ -172,6 +255,11 @@ credentials bên dưới + <code>BASE_URL</code> công khai.</p>
 <td><code>TRUST_PROXY</code></td>
 <td><code>false</code></td>
 <td>tin <code>X-Forwarded-*</code> sau reverse proxy</td>
+</tr>
+<tr>
+<td><code>TRUSTED_PROXIES</code></td>
+<td>–</td>
+<td>danh sách CIDR (phân tách dấu phẩy) được tin là chặng proxy khi <code>TRUST_PROXY=true</code> (mặc định: chỉ loopback/private)</td>
 </tr>
 <tr>
 <td><code>TRUSTED_ORIGINS</code></td>
@@ -212,11 +300,12 @@ credentials bên dưới + <code>BASE_URL</code> công khai.</p>
 </table>
 <hr />
 <h2>Bảo mật</h2>
-<p>Credential và token OAuth được mã hoá at-rest (AES-256-GCM). Server áp rate-limit +
-lockout đăng nhập, kiểm tra CSRF/Origin, chống SSRF cho fetch ra ngoài, security
-headers nghiêm ngặt + iframe email cô lập, và audit log append-only
-(<code>GET /api/audit</code>). Xem <a href="https://github.com/lyquyduong/skimmail/blob/main/SECURITY.md"><code>SECURITY.md</code></a> để biết tư thế bảo mật đầy đủ
-và cách báo lỗ hổng.</p>
+<p>Credential, token OAuth và nội dung thư đã cache được mã hoá at-rest
+(AES-256-GCM). Lần đăng nhập đầu tiên bị chặn bởi mã claim dùng một lần. Server áp
+rate-limit + lockout đăng nhập, kiểm tra CSRF/Origin, chống SSRF cho fetch ra
+ngoài, security headers nghiêm ngặt + iframe email cô lập, khoá màn hình khi rảnh
+do server cưỡng chế, và audit log append-only (<code>GET /api/audit</code>). Xem
+<a href="https://github.com/lyquyduong/skimmail/blob/main/SECURITY.md"><code>SECURITY.md</code></a> để biết tư thế bảo mật đầy đủ và cách báo lỗ hổng.</p>
 <h2>Gỡ cài đặt (xoá hoàn toàn)</h2>
 <p>Bản thân việc gỡ cài đặt không xoá dữ liệu — tài khoản, cache mail và <strong>master
 key</strong> mã hoá nằm trong Docker volume hoặc <code>/var/lib/skimmail</code>. Các bước đánh dấu
@@ -268,5 +357,6 @@ Trước ngày đó, mã nguồn vẫn là độc quyền.</p>
 <li><strong>Thư viện bên thứ ba:</strong> danh sách giấy phép trong <a href="NOTICE"><code>NOTICE</code></a></li>
 <li><strong>Quyền riêng tư:</strong> không phone-home; dữ liệu thu thập cho Pro/Sponsor là tùy chọn (xem <a href="https://github.com/lyquyduong/skimmail/blob/main/PRIVACY.md"><code>PRIVACY.md</code></a>)</li>
 <li><strong>Đóng góp:</strong> cần ký <a href="https://github.com/lyquyduong/skimmail/blob/main/CLA.md">CLA</a></li>
+<li><strong>Thao tác với license key:</strong> xem <a href="https://github.com/lyquyduong/skimmail/blob/main/LICENSE-SIGNING.md"><code>LICENSE-SIGNING.md</code></a> (chỉ dành cho maintainer)</li>
 </ul></main></body>
 </html>

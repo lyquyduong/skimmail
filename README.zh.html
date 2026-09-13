@@ -37,19 +37,28 @@ ul,ol { padding-left:1.5em; }</style>
 IMAP 为核心 + Gmail/Outlook OAuth——打包为<strong>单个 Go 二进制</strong>并内嵌 React SPA。
 <strong>无需任何外部服务</strong>。</p>
 </blockquote>
-<p><strong>许可证：</strong> Business Source License 1.1（专有软件；2030 年转为 AGPL） · <strong>安全：</strong> <a href="https://github.com/lyquyduong/skimmail/blob/main/SECURITY.md"><code>SECURITY.md</code></a></p>
+<p><strong>许可证：</strong> Business Source License 1.1（专有软件；2030 年转为 AGPL） · <strong>安全：</strong> <a href="https://github.com/lyquyduong/skimmail/blob/main/SECURITY.md"><code>SECURITY.md</code></a> · <strong>文档：</strong> <a href="https://github.com/lyquyduong/skimmail/wiki/Home-zh">Wiki</a></p>
 <blockquote>
-<p><strong>这是 <code>0.1.0</code> 版本</strong> —— 专注的邮件阅读器 + 账户分组。其余能力（AI、通知、可插拔
-存储、应用内更新）已列入路线图。</p>
+<p><strong>下面写的都已经发布。</strong> 多账户邮件、按账户出口（egress）、规则与告警、通知、
+备份与恢复、插件、远程访问和多用户角色都在当前版本里 —— <strong>AI Triage 是唯一一项
+仍在路线图上的重要功能</strong>。逐版本细节见 <a href="https://github.com/lyquyduong/skimmail/blob/main/CHANGELOG.md"><code>CHANGELOG.md</code></a>。</p>
 </blockquote>
+<!-- HERO SCREENSHOT PLACEHOLDER — intentionally empty.
+     Blocked on SKIMMAIL-166 (screenshot-safe mode, slotted 1.12.0): a hero shot
+     needs realistic mail and no real addresses. Do NOT use docs/screenshot-hero.png
+     here — it is a v0.1.0 capture showing one account and an empty third pane,
+     which contradicts the multi-account, 3-pane pitch above. -->
+
 <hr />
 <h2>功能</h2>
+<h3>阅读</h3>
 <ul>
-<li><strong>多账户 IMAP</strong> 阅读——通过 host/port + 应用专用密码添加账户。</li>
-<li><strong>OAuth</strong> 支持 Gmail 与 Outlook（基于 IMAP 的 XOAUTH2）——<em>可选，需要你自己的
-  Google/Azure 应用凭据</em>。</li>
-<li>跨所有账户的<strong>统一收件箱</strong>、轻量<strong>会话线程（threading）</strong>、<strong>三栏界面</strong>，阅读
-  区在沙箱 iframe 中渲染（HTML 净化、默认拦截远程图片）。</li>
+<li><strong>多账户 IMAP</strong> 阅读——通过 host/port + 应用专用密码添加账户。Gmail 与 Outlook 的
+  <strong>OAuth</strong>（基于 IMAP 的 XOAUTH2）为可选，使用你自己的 Google/Azure 应用凭据。</li>
+<li>跨所有账户的<strong>统一收件箱</strong>、轻量<strong>会话线程（threading）</strong>、<strong>三栏界面</strong>，阅读区在
+  沙箱 iframe 中渲染。远程图片默认一直拦截，直到你主动要求——而且那时是
+  <strong>SkimMail 去取图，不是你的浏览器</strong>，并且走该账户自己的出口，所以发件人的服务器
+  看不到你。</li>
 <li><strong>账户分组</strong>——把多个账户归入有名称、带配色的分组，按组一起阅读邮件。</li>
 <li><strong>实时</strong>新邮件推送：IMAP <strong>IDLE → WebSocket</strong>，并带<strong>轮询兜底</strong>，即使 IDLE 断开
   也能收到邮件——即便没有客户端打开，后端也会持续同步。</li>
@@ -59,8 +68,58 @@ IMAP 为核心 + Gmail/Outlook OAuth——打包为<strong>单个 Go 二进制</
   批量操作、<strong>VIP / 静音</strong>发件人、一键<strong>退订</strong>（RFC 8058）。</li>
 <li><strong>键盘优先</strong>（Superhuman 风格）+ <strong>专注/处理模式</strong> + <strong>命令面板</strong>（⌘K）+ <strong>PWA</strong>
   （可安装、外壳离线可用）+ <strong>多语言</strong>（English / Tiếng Việt / 中文，深色与浅色主题）。</li>
-<li><strong>常驻后台同步</strong>与<strong>安全</strong>层：登录限流 + 锁定、CSRF/Origin 校验、SSRF 防护、凭据
-  静态加密、以及审计日志。</li>
+</ul>
+<h3>每个账户都有自己的出口</h3>
+<ul>
+<li><strong>按账户出口（egress）。</strong> 让每个账户的邮件流量各走各的路：<strong>SOCKS5 代理</strong>、
+  <strong>HTTP 代理</strong>、<strong>内嵌 WireGuard 隧道</strong>，或你自己部署的<strong>无服务器中继（relay）</strong>
+  ——把一个文件粘贴到 Cloudflare Workers，或在容器里运行 <code>skimmail relay</code>。工作与
+  私人邮箱不必共用同一个出口 IP。邮件客户端通常把这件事交给外部管道
+  （<code>wireproxy</code>、按应用 VPN、再起一个容器）；在这里它只是账户上的一个选项。</li>
+<li><strong>是证据，不只是配置。</strong> 每个连接都会报告它<strong>实际离开时的公网 IP</strong> —— 代理、
+  隧道、中继乃至 Direct 都一样 —— 并且当两个本应彼此隔离的账户从<strong>同一个地址</strong>出
+  现时，SkimMail 会<strong>发出警告</strong>。<strong>Test</strong> 会通过该出口建立一次真实连接并报告延迟。</li>
+<li><strong>失败即关闭（fail-closed）。</strong> 关掉一个连接绝不会把它的账户退回到裸连接：它们
+  会变为 <strong>degraded</strong> 并停止同步，直到你主动选择 <strong>Direct</strong> —— 已关闭的出口无法悄
+  悄泄露你家里的 IP。</li>
+</ul>
+<h3>自动化与运维</h3>
+<ul>
+<li><strong>Rules &amp; Signals（规则与信号）</strong>——按发件人、主题（纯文本或正则）、账户或分组
+  匹配来信，或匹配“看起来像一次性验证码”，然后通知某个渠道、在应用内弹出提示、
+  发送推送，或打上可点击筛选的<strong>标签（tag）</strong>。含一次性验证码的邮件会显示 <strong>OTP</strong>
+  小标签，点一下即可复制；验证码本身从不存储。</li>
+<li><strong>通知，六种渠道</strong>——普通 <strong>webhook</strong>、<strong>Telegram</strong>、<strong>Slack</strong>、<strong>Discord</strong>、
+  <strong>Microsoft Teams</strong> 或 <strong>Google Chat</strong>，想加多少都行，每个都有自己的
+  <strong>Send test</strong> —— 另外还有发往浏览器和手机的 <strong>Web Push</strong>（标准 VAPID 密钥由
+  SkimMail 自行生成，无需 Firebase 账号），并支持免打扰时段、内容隐私和按账户开关。</li>
+<li><strong>同步健康</strong>——反复失败的账户会<strong>自行停止</strong>，而不是一直冲击你的邮件服务商；看板
+  按 Stopped / Degraded / Paused 展示每个账户，并提供一键 Resume、Retry、Stop；当
+  账户停止同步、代理或隧道掉线、OAuth 登录即将过期时会发出告警。</li>
+<li><strong>备份与恢复</strong>——为整个实例（账户、邮件与设置）生成加密快照，可恢复到任意一台
+  SkimMail 服务器，哪怕它用的是另一种数据库 —— 还可按计划备份到本地目录或任意
+  S3 兼容存储（MinIO、Cloudflare R2、Backblaze B2、Wasabi、AWS S3）。</li>
+<li><strong>无需端口转发的远程访问</strong>——通过 <strong>Cloudflare Tunnel</strong> 或 <strong>Tailscale</strong> 把
+  SkimMail 暴露出去，并提供二维码方便手机打开。这些程序和 WireGuard 引擎都是<strong>按需
+  下载的插件</strong>，对照一份已签名、按 SHA256 固定的索引校验；在
+  <strong>Settings ▸ 插件</strong>里安装、更新和删除它们。</li>
+<li><strong>在浏览器里配置，而不是编辑文本文件</strong>——公开 URL、OAuth 应用和登录模式都是应用
+  内的设置；用环境变量设定的值依然优先，并在界面上显示为锁定，同时写明该删除哪个
+  变量。<strong>应用内自更新</strong>可在二进制 / apt 安装上一键装好新版本，
+  <strong>Settings ▸ 日志</strong>则提供实时查看日志、运行时切换日志级别与轮转设置。</li>
+</ul>
+<h3>安全与多用户</h3>
+<ul>
+<li><strong>真正隔离的多用户</strong>——<code>AUTH_MODE=users</code> 让每个人拥有自己的账户、邮件和设置，别
+  人完全看不到，角色为 <strong>owner</strong>、<strong>operator</strong> 或 <strong>viewer</strong>；用
+  <code>skimmail user add</code> 创建。单人实例依旧和以前一样简单。</li>
+<li><strong>安全层</strong>——首次登录由<strong>一次性认领码</strong>把关；凭据、OAuth 令牌与缓存的邮件正文均
+  <strong>静态加密</strong>（AES-256-GCM）；另有登录限流 + 锁定、2FA、由服务端强制的空闲锁屏、
+  CSRF/Origin 校验、SSRF 防护、已签名的发行版与插件索引，以及只追加的审计日志。</li>
+<li><strong>属于你，并且一直属于你</strong>——单个 Go 二进制内嵌 React SPA，内置 SQLite
+  （PostgreSQL 与 MySQL 可选；MySQL 为实验性），<strong>常驻后台同步</strong>，并且<strong>不回传
+  （no phone-home）</strong>。<strong>Community Edition 免费</strong>；Sponsor 与 Pro 密钥<strong>完全离线</strong>
+  校验，密钥过期也绝不会拿走你已经添加的东西。</li>
 </ul>
 <h2>环境要求</h2>
 <p>只需 <strong>Docker</strong> —— 内置 SQLite，无需任何外部服务。
@@ -69,17 +128,16 @@ IMAP 为核心 + Gmail/Outlook OAuth——打包为<strong>单个 Go 二进制</
 <h2>快速开始</h2>
 <p>无需源码 — 下载已发布的 compose 文件（它直接拉取预构建镜像）：</p>
 <pre><code class="language-bash">curl -fsSLO https://lyquyduong.github.io/skimmail/docker-compose.yml
-docker compose up -d                       # → http://localhost:8080（SQLite + 文件系统）
-# docker compose --profile wireguard up -d # SkimMailWG 版 → http://localhost:8082
+docker compose up -d      # → http://localhost:8080（SQLite + 文件系统）
 </code></pre>
 <p>或运行纯镜像（distroless + 非 root；数据在 <code>/data</code> 卷）：</p>
 <pre><code class="language-bash">docker run -d -p 8080:8080 -v skimmail-data:/data \
   -e AUTH_MODE=passphrase ghcr.io/lyquyduong/skimmail:latest
 </code></pre>
-<p><strong>一个软件包，功能齐备。</strong> 过去曾有一个单独的 <code>skimmail-wg</code> 版本用于<strong>内嵌 WireGuard
-出口</strong>（在应用内让某账户通过 WireGuard 隧道，§21）。自 1.4.3 起该能力已并入默认构建：
-隧道引擎是一个按 SHA256 固定的插件，首次启用时由 SkimMail 自动下载，无需额外安装，
-也不必在两个镜像之间做选择。</p>
+<p><strong>一个镜像，一个软件包。</strong> 内嵌 WireGuard 出口，以及 PostgreSQL、MySQL 和 S3 支持
+都在默认构建里 —— WireGuard 引擎是一个按 SHA256 固定的插件，你第一次添加隧道时由
+SkimMail 自动下载，无需额外安装，也不必在两个镜像之间做选择。单独的 <code>skimmail-wg</code>
+版本已于 1.7.0 停止发布；若你仍装着那个 apt 包，<code>apt remove skimmail-wg</code> 是安全的。</p>
 <h3>在 Ubuntu / Debian 上安装（apt）</h3>
 <pre><code class="language-bash">curl -fsSL https://lyquyduong.github.io/skimmail/apt/skimmail.gpg \
   | sudo tee /usr/share/keyrings/skimmail.gpg &gt;/dev/null
@@ -127,12 +185,19 @@ docker logs skimmail 2&gt;&amp;1 | grep 'claim code'          # docker
 <li><strong>键盘</strong>——<code>?</code> 显示全部快捷键：<code>j</code>/<code>k</code> 移动 · <code>Enter</code>/<code>o</code> 打开 · <code>e</code> 归档 ·
   <code>#</code> 删除 · <code>s</code> 稍后 · <code>x</code> 选择 · <code>Space</code> 快速预览 · <code>/</code> 搜索 ·
   <strong><code>f</code> 专注模式</strong>（“清空收件箱”） · <code>Esc</code> 关闭。</li>
+<li><strong>标签（tag）</strong>——规则可以给匹配的邮件打标签；点击列表中的标签小标即可按它筛选。</li>
+<li><strong>图片</strong>——图片被拦截时的横幅提供 <strong>Show images</strong>，以及 <strong>Always</strong> 或
+  <strong>Never from this sender</strong>（两者都可撤销；影响整个实例的开关在
+  <strong>Settings ▸ 安全</strong>）。</li>
 <li><strong>PWA</strong>——从浏览器地址栏安装；应用外壳可离线使用。</li>
 <li><strong>语言 / 主题</strong>——在侧栏切换 EN / VI / 中 与深色/浅色。</li>
 </ul>
 <hr />
 <h2>配置</h2>
-<p>通过环境变量配置（12-factor）。见 <a href="https://github.com/lyquyduong/skimmail/blob/main/.env.example"><code>.env.example</code></a>。</p>
+<p>通过环境变量配置（12-factor）——见 <a href="https://github.com/lyquyduong/skimmail/blob/main/.env.example"><code>.env.example</code></a>。自 1.9.0 起，大多数
+设置也可以直接在应用里（<strong>Settings</strong>）修改；用环境变量设定的值始终优先，并在那里显示
+为锁定。完整参考——每个变量、各个配置层面，以及谁覆盖谁——见
+<a href="https://github.com/lyquyduong/skimmail/wiki/Configuration-zh">wiki ▸ 配置</a>。</p>
 <table>
 <thead>
 <tr>
@@ -166,6 +231,11 @@ docker logs skimmail 2&gt;&amp;1 | grep 'claim code'          # docker
 <td><code>TRUST_PROXY</code></td>
 <td><code>false</code></td>
 <td>反向代理后信任 <code>X-Forwarded-*</code></td>
+</tr>
+<tr>
+<td><code>TRUSTED_PROXIES</code></td>
+<td>–</td>
+<td>当 <code>TRUST_PROXY=true</code> 时，被视为代理跳的 CIDR 列表（逗号分隔；默认仅回环/私有网段）</td>
 </tr>
 <tr>
 <td><code>TRUSTED_ORIGINS</code></td>
@@ -206,8 +276,9 @@ docker logs skimmail 2&gt;&amp;1 | grep 'claim code'          # docker
 </table>
 <hr />
 <h2>安全</h2>
-<p>凭据与 OAuth 令牌静态加密（AES-256-GCM）。服务端实施登录限流 + 锁定、CSRF/Origin
-校验、对外请求的 SSRF 防护、严格安全响应头 + 沙箱邮件 iframe，以及只追加的审计日志
+<p>凭据、OAuth 令牌与缓存的邮件正文均静态加密（AES-256-GCM）。首次登录由一次性认领码
+把关。服务端实施登录限流 + 锁定、CSRF/Origin 校验、对外请求的 SSRF 防护、严格安全
+响应头 + 沙箱邮件 iframe、由服务端强制的空闲锁屏，以及只追加的审计日志
 （<code>GET /api/audit</code>）。完整安全姿态与漏洞报告方式见 <a href="https://github.com/lyquyduong/skimmail/blob/main/SECURITY.md"><code>SECURITY.md</code></a>。</p>
 <h2>卸载（完全移除）</h2>
 <p>卸载本身不会删除你的数据 —— 账户、邮件缓存和加密<strong>主密钥</strong>保存在 Docker 卷或
@@ -258,5 +329,6 @@ SPDX：<code>BUSL-1.1</code>。</p>
 <li><strong>第三方依赖：</strong> 许可证清单见 <a href="NOTICE"><code>NOTICE</code></a></li>
 <li><strong>隐私：</strong> 不回传（no phone-home）；Pro/Sponsor 的数据收集为可选（见 <a href="https://github.com/lyquyduong/skimmail/blob/main/PRIVACY.md"><code>PRIVACY.md</code></a>）</li>
 <li><strong>参与贡献：</strong> 需签署 <a href="https://github.com/lyquyduong/skimmail/blob/main/CLA.md">CLA</a></li>
+<li><strong>许可证密钥操作：</strong> 见 <a href="https://github.com/lyquyduong/skimmail/blob/main/LICENSE-SIGNING.md"><code>LICENSE-SIGNING.md</code></a>（仅维护者）</li>
 </ul></main></body>
 </html>
