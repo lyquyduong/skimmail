@@ -45,11 +45,24 @@ multi-user roles are all in the current release — <strong>AI Triage is the onl
 headline feature still on the roadmap</strong>. Release-by-release detail:
 <a href="https://github.com/lyquyduong/skimmail/blob/main/CHANGELOG.md"><code>CHANGELOG.md</code></a>.</p>
 </blockquote>
-<!-- HERO SCREENSHOT PLACEHOLDER — intentionally empty.
-     Blocked on SKIMMAIL-166 (screenshot-safe mode, slotted 1.12.0): a hero shot
-     needs realistic mail and no real addresses. Do NOT use docs/screenshot-hero.png
-     here — it is a v0.1.0 capture showing one account and an empty third pane,
-     which contradicts the multi-account, 3-pane pitch above. -->
+<p align="center">
+  <img src="docs/screenshot-hero.png" alt="SkimMail: five accounts in three groups down the left, a unified inbox in the middle with per-bundle counts and colour-coded tags, and an opened message with its attachment on the right." width="100%">
+</p>
+
+<!-- The shot above replaces the v0.1.0 capture that used to be here, which showed
+     one account and an empty third pane directly under a headline about people
+     with too many inboxes.
+     It is v1.13.0 rendering a THROWAWAY instance: a temporary DATA_DIR seeded
+     with 5 accounts and 20 invented messages, all at reserved example domains
+     (RFC 2606). Nobody's real mail was captured, so no masking was involved —
+     the point of screenshot-safe mode (SKIMMAIL-166) is capturing a REAL inbox
+     safely, which is a different shot and still worth taking.
+     Both themes are kept: docs/screenshot-hero.png is Ink Dark, and
+     docs/screenshot-hero-light.png is Day Light.
+     There is no regeneration script yet. The recipe is recorded in PROGRESS.md
+     session 88: build the binary, point it at a temporary DATA_DIR with
+     AUTH_MODE=none, seed accounts/messages plus one cached body blob, then
+     capture at 1600x1000. Worth a script the second time somebody needs it. -->
 
 <hr />
 <h2>Features</h2>
