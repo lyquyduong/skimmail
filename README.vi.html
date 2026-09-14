@@ -68,11 +68,17 @@ năng lớn duy nhất còn nằm trong roadmap</strong>. Chi tiết từng bả
   phòng</strong> để mail vẫn về nếu IDLE rớt — backend đồng bộ cả khi không có client mở.</li>
 <li><strong>Tìm kiếm 2 tầng</strong> — full-text cục bộ nhanh (SQLite FTS5) + tùy chọn <strong>fallback
   phía server</strong> để tìm cả mail ngoài phạm vi đã cache.</li>
-<li><strong>Đọc nhanh</strong> — tạm ẩn (snooze), ghim (pin), <strong>bundles</strong> chia hộp thư, chọn nhiều</li>
-<li>thao tác hàng loạt, sender <strong>VIP / mute</strong>, <strong>hủy đăng ký 1 chạm</strong> (RFC 8058).</li>
+<li><strong>Đọc nhanh</strong> — tạm ẩn (snooze), ghim (pin), <strong>Đã gắn sao</strong> trên mọi tài khoản,
+  <strong>bundles</strong> chia hộp thư, chọn nhiều + thao tác hàng loạt, <strong>chuyển vào thư mục
+  bất kỳ</strong> có nút hoàn tác, sender <strong>VIP / mute</strong> liệt kê và gỡ được ngay trong
+  Settings, <strong>hủy đăng ký 1 chạm</strong> (RFC 8058).</li>
 <li><strong>Bàn phím trước hết</strong> (kiểu Superhuman) + <strong>chế độ Focus/triage</strong> + <strong>command
   palette</strong> (⌘K) + <strong>PWA</strong> (cài được, chạy offline phần vỏ) + <strong>đa ngôn ngữ</strong>
   (English / Tiếng Việt / 中文, giao diện sáng &amp; tối).</li>
+<li><strong>Chế độ an toàn khi chụp màn hình</strong> — mọi địa chỉ, tên, tiêu đề, dòng xem
+  trước và tên tệp đính kèm hiển thị đều được thay bằng dữ liệu giả trông như
+  thật, và thân thư không render chút nào, nên bạn có thể báo lỗi hay viết bài
+  với một hộp thư thật ngay trên màn hình. Mặc định tắt, theo từng thiết bị.</li>
 </ul>
 <h3>Mỗi tài khoản một đường ra riêng</h3>
 <ul>
@@ -115,6 +121,14 @@ năng lớn duy nhất còn nằm trong roadmap</strong>. Chi tiết từng bả
   đó và engine WireGuard là <strong>plugin tải về theo nhu cầu</strong>, đối chiếu với một chỉ
   mục đã ký và ghim SHA256; cài, cập nhật và gỡ chúng ngay tại
   <strong>Settings ▸ Plugins</strong>.</li>
+<li><strong>Thư của bạn nằm ở đâu, và nằm bao lâu</strong> — thân thư đã cache nằm trong một
+  blob store do bạn chọn: hệ thống tệp tại máy, hoặc bất kỳ bucket tương thích
+  S3 nào, đổi qua lại ngay ở <strong>Settings ▸ Storage</strong> với nút kiểm tra kết nối
+  thật và một lượt migration chạy tiếp được nếu bị ngắt. Phần lưu giữ nằm ở
+  <strong>Settings ▸ Security</strong>: mức đang dùng, trần dung lượng, giữ thân thư bao
+  nhiêu ngày, và lệnh purge thủ công. SQLite là cơ sở dữ liệu mặc định, còn
+  PostgreSQL và MySQL đã được compile sẵn trong mọi bản phát hành — không cần
+  dựng lại.</li>
 <li><strong>Cấu hình trong trình duyệt, không phải trong file text</strong> — URL công khai, app
   OAuth và chế độ đăng nhập là các thiết lập ngay trong app, còn thứ gì đặt bằng
   biến môi trường vẫn thắng và hiện ra ở đó dưới dạng khoá, kèm tên biến cần xoá.

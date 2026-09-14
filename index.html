@@ -81,11 +81,17 @@ headline feature still on the roadmap</strong>. Release-by-release detail:
   so mail still arrives if IDLE drops — the backend syncs even when no client is open.</li>
 <li><strong>Search, 2-tier</strong> — fast local full-text (SQLite FTS5) + optional server-side
   fallback to reach mail outside the cached window.</li>
-<li><strong>Read-fast</strong> power tools — snooze, pin, split-inbox <strong>bundles</strong>, multi-select +
-  bulk actions, VIP / mute senders, one-click <strong>unsubscribe</strong> (RFC 8058).</li>
+<li><strong>Read-fast</strong> power tools — snooze, pin, <strong>Starred</strong> across every account,
+  split-inbox <strong>bundles</strong>, multi-select + bulk actions, <strong>move to any folder</strong>
+  with undo, VIP / mute senders listed and undoable in Settings, one-click
+  <strong>unsubscribe</strong> (RFC 8058).</li>
 <li><strong>Keyboard-first</strong> (Superhuman-style) + <strong>Focus/triage mode</strong> + <strong>command palette</strong>
   (⌘K) + <strong>PWA</strong> (installable, offline shell) + <strong>i18n</strong> (English / Tiếng Việt /
   中文, dark &amp; light themes).</li>
+<li><strong>Screenshot-safe mode</strong> — every displayed address, name, subject, preview line
+  and attachment name is replaced with a realistic stand-in and message bodies
+  are not rendered at all, so you can file a bug or write a post with a real
+  inbox on screen. Off by default, per device.</li>
 </ul>
 <h3>Give every account its own way out</h3>
 <ul>
@@ -128,6 +134,13 @@ headline feature still on the roadmap</strong>. Release-by-release detail:
   Those helpers and the WireGuard engine are <strong>plugins downloaded on demand</strong>
   against a signed, SHA256-pinned index; install, update and remove them from
   <strong>Settings ▸ Plugins</strong>.</li>
+<li><strong>Where your mail is kept, and for how long</strong> — cached message bodies live in
+  a blob store you choose: the local filesystem, or any S3-compatible bucket,
+  switchable from <strong>Settings ▸ Storage</strong> with a real connection test and a
+  migration that resumes if it is interrupted. The retention side sits in
+  <strong>Settings ▸ Security</strong>: current usage, a size ceiling, how many days to keep
+  a body, and a manual purge. SQLite is the default database, and PostgreSQL and
+  MySQL are compiled into every released build — no rebuild needed.</li>
 <li><strong>Configured in the browser, not a text editor</strong> — public URL, OAuth apps and
   sign-in mode are settings inside the app, and anything set in the environment
   still wins and shows as locked, naming the variable to remove. <strong>In-app
