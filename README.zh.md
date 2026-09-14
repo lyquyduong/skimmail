@@ -30,16 +30,23 @@
 
 </div>
 
-<!-- HERO SCREENSHOT — deliberately absent. Two independent reasons:
-     (1) docs/screenshot-hero.png 404s on GitHub: the published branch carries
-         only README.md / README.vi.md / README.zh.md, no docs/ directory, so the
-         <img> that used to sit here rendered as a broken image on the one page
-         this file exists to serve.
-     (2) It is a v0.1.0-phase0 capture showing ONE account and an empty third
-         pane, directly under a headline aimed at people with too many inboxes.
-     Put a real screenshot back when screenshot-safe mode (SKIMMAIL-166, slotted
-     1.12.0) can produce one with realistic mail and no real addresses. Until
-     then the text hero below says something true instead. -->
+<p align="center">
+  <img src="https://raw.githubusercontent.com/lyquyduong/skimmail/main/docs/screenshot-hero.png" alt="SkimMail: five accounts in three groups down the left, a unified inbox in the middle with per-bundle counts and colour-coded tags, and an opened message with its attachment on the right." width="100%">
+</p>
+
+<!-- HERO SCREENSHOT — v1.13.0, replacing the v0.1.0 capture that showed one
+     account and an empty third pane under a headline about people with too many
+     inboxes.
+     The src is an ABSOLUTE raw.githubusercontent URL on purpose. A relative
+     docs/ path 404s here: the published branch carries only the READMEs plus
+     LICENSE, SECURITY.md and CLA.md. That means the PNG must be pushed to the
+     GitHub repo at docs/screenshot-hero.png for this to render at all — if you
+     sync this file without pushing the image, the hero is a broken-image icon
+     on the one page this file exists to serve. That is exactly how the previous
+     hero broke.
+     What it shows: a THROWAWAY instance — a temporary DATA_DIR seeded with 5
+     accounts and 20 invented messages at reserved example domains (RFC 2606).
+     No real mail was captured. -->
 
 ```text
    work@corp       ──▶  WireGuard tunnel   ──▶   203.0.113.10
