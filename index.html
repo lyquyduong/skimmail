@@ -161,7 +161,7 @@ headline feature still on the roadmap</strong>. Release-by-release detail:
 docker compose up -d      # → http://localhost:8080  (SQLite + filesystem)
 </code></pre>
 <p>Or run the published image directly (distroless + non-root; data in the <code>/data</code> volume):</p>
-<pre><code class="language-bash">docker run -d -p 8080:8080 -v skimmail-data:/data \
+<pre><code class="language-bash">docker run -d --name skimmail -p 8080:8080 -v skimmail-data:/data \
   -e AUTH_MODE=passphrase ghcr.io/lyquyduong/skimmail:latest
 </code></pre>
 <p><strong>One image, one package.</strong> Embedded WireGuard egress, PostgreSQL, MySQL and S3
@@ -188,7 +188,8 @@ release channels (image, <code>.deb</code>, apt repo) ship from GitHub — see
 for a <strong>one-time claim code</strong> it printed at first boot — it is what stops whoever
 reaches the port first from claiming your instance:</p>
 <pre><code class="language-bash">sudo journalctl -u skimmail | grep 'claim code'        # apt (sudo: the journal is root-only)
-docker logs skimmail 2&gt;&amp;1 | grep 'claim code'          # docker
+docker compose logs skimmail | grep 'claim code'       # docker compose (service name; the container is skimmail-skimmail-1)
+docker logs skimmail 2&gt;&amp;1 | grep 'claim code'          # docker run (only if you passed --name skimmail, as above)
 </code></pre>
 <p>Lost it? Mint a replacement — the old one stops working:</p>
 <pre><code class="language-bash">sudo -u skimmail skimmail --data-dir /var/lib/skimmail claim-code --rotate
@@ -249,7 +250,7 @@ every variable, the config planes, and what overrides what — is in the
 <tr>
 <td><code>AUTH_MODE</code></td>
 <td><code>passphrase</code></td>
-<td><code>passphrase</code> (one shared passphrase) or <code>users</code> (named accounts with roles). Since 1.10.0 <code>users</code> is really multi-user: each account owns its own mailboxes and cannot see anyone else's, and each user is <code>owner</code>, <code>operator</code> or <code>viewer</code>. Create them with <code>skimmail user add</code>.</td>
+<td><code>passphrase</code> (one shared passphrase) or <code>users</code> (named accounts with roles). Since 1.10.0 <code>users</code> is really multi-user: each account owns its own mailboxes and cannot see anyone else's, and each user is <code>owner</code>, <code>operator</code> or <code>viewer</code>. Create them with <code>skimmail user add</code>. A third value, <code>none</code>, turns authentication off entirely; it additionally requires <code>SKIMMAIL_ALLOW_AUTH_NONE=1</code> in the process environment, because <code>auth.mode</code> is writable from the UI and the CLI and a stolen session must not be able to downgrade the instance on its own.</td>
 </tr>
 <tr>
 <td><code>DATA_DIR</code></td>

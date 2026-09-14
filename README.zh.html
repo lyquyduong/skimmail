@@ -131,7 +131,7 @@ IMAP 为核心 + Gmail/Outlook OAuth——打包为<strong>单个 Go 二进制</
 docker compose up -d      # → http://localhost:8080（SQLite + 文件系统）
 </code></pre>
 <p>或运行纯镜像（distroless + 非 root；数据在 <code>/data</code> 卷）：</p>
-<pre><code class="language-bash">docker run -d -p 8080:8080 -v skimmail-data:/data \
+<pre><code class="language-bash">docker run -d --name skimmail -p 8080:8080 -v skimmail-data:/data \
   -e AUTH_MODE=passphrase ghcr.io/lyquyduong/skimmail:latest
 </code></pre>
 <p><strong>一个镜像，一个软件包。</strong> 内嵌 WireGuard 出口，以及 PostgreSQL、MySQL 和 S3 支持
@@ -154,7 +154,8 @@ apt 仓库）都从 GitHub 发布——见 <a href="https://github.com/lyquyduon
 <p>打开 <strong>http://localhost:8080</strong>。在让你创建任何东西之前，SkimMail 会先索取首次启动时
 打印的<strong>一次性认领码</strong> —— 它用来阻止先访问到端口的人抢先认领你的实例：</p>
 <pre><code class="language-bash">sudo journalctl -u skimmail | grep 'claim code'        # apt（需要 sudo：journal 仅 root 可读）
-docker logs skimmail 2&gt;&amp;1 | grep 'claim code'          # docker
+docker compose logs skimmail | grep 'claim code'       # docker compose（服务名；容器实际叫 skimmail-skimmail-1）
+docker logs skimmail 2&gt;&amp;1 | grep 'claim code'          # docker run（仅当你像上面那样传了 --name skimmail）
 </code></pre>
 <p>丢失了？重新生成一个 —— 旧的随即失效：</p>
 <pre><code class="language-bash">sudo -u skimmail skimmail --data-dir /var/lib/skimmail claim-code --rotate
@@ -210,7 +211,7 @@ docker logs skimmail 2&gt;&amp;1 | grep 'claim code'          # docker
 <tr>
 <td><code>AUTH_MODE</code></td>
 <td><code>passphrase</code></td>
-<td><code>passphrase</code>（共享口令）或 <code>users</code>（具名账号 + 角色）。自 1.10.0 起 <code>users</code> 是真正的多用户：每人只拥有并看到自己的邮箱，角色为 <code>owner</code>、<code>operator</code> 或 <code>viewer</code>。用 <code>skimmail user add</code> 创建。</td>
+<td><code>passphrase</code>（共享口令）或 <code>users</code>（具名账号 + 角色）。自 1.10.0 起 <code>users</code> 是真正的多用户：每人只拥有并看到自己的邮箱，角色为 <code>owner</code>、<code>operator</code> 或 <code>viewer</code>。用 <code>skimmail user add</code> 创建。还有第三个取值 <code>none</code>，它完全关闭认证；并且必须在进程环境中另外设置 <code>SKIMMAIL_ALLOW_AUTH_NONE=1</code>，因为 <code>auth.mode</code> 可以从界面和 CLI 写入，被盗用的会话不能凭自己就把整个实例降级为无认证。</td>
 </tr>
 <tr>
 <td><code>DATA_DIR</code></td>

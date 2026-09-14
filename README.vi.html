@@ -149,7 +149,7 @@ năng lớn duy nhất còn nằm trong roadmap</strong>. Chi tiết từng bả
 docker compose up -d      # → http://localhost:8080  (SQLite + filesystem)
 </code></pre>
 <p>Hoặc chạy image thuần (distroless + non-root; dữ liệu ở volume <code>/data</code>):</p>
-<pre><code class="language-bash">docker run -d -p 8080:8080 -v skimmail-data:/data \
+<pre><code class="language-bash">docker run -d --name skimmail -p 8080:8080 -v skimmail-data:/data \
   -e AUTH_MODE=passphrase ghcr.io/lyquyduong/skimmail:latest
 </code></pre>
 <p><strong>Một image, một gói.</strong> WireGuard egress nhúng, PostgreSQL, MySQL và S3 đều nằm
@@ -174,7 +174,8 @@ realtime</strong> nằm ở <strong>Settings ▸ Logs</strong>. Nâng cấp qua 
 một <strong>mã claim dùng một lần</strong> đã in ra lúc khởi động đầu tiên — đây là thứ ngăn
 người truy cập trước chiếm mất instance của bạn:</p>
 <pre><code class="language-bash">sudo journalctl -u skimmail | grep 'claim code'        # apt (cần sudo: journal chỉ root đọc được)
-docker logs skimmail 2&gt;&amp;1 | grep 'claim code'          # docker
+docker compose logs skimmail | grep 'claim code'       # docker compose (tên service; container thật tên skimmail-skimmail-1)
+docker logs skimmail 2&gt;&amp;1 | grep 'claim code'          # docker run (chỉ chạy nếu bạn đã truyền --name skimmail như trên)
 </code></pre>
 <p>Mất mã? Tạo mã thay thế — mã cũ hết hiệu lực:</p>
 <pre><code class="language-bash">sudo -u skimmail skimmail --data-dir /var/lib/skimmail claim-code --rotate
@@ -234,7 +235,7 @@ mọi biến, các mặt phẳng cấu hình và thứ gì đè lên thứ gì �
 <tr>
 <td><code>AUTH_MODE</code></td>
 <td><code>passphrase</code></td>
-<td><code>passphrase</code> (một mật khẩu chung) hoặc <code>users</code> (tài khoản có tên + phân quyền). Từ 1.10.0 <code>users</code> là đa người dùng thật: mỗi người sở hữu hộp thư của mình và không thấy của người khác, vai trò là <code>owner</code>, <code>operator</code> hoặc <code>viewer</code>. Tạo bằng <code>skimmail user add</code>.</td>
+<td><code>passphrase</code> (một mật khẩu chung) hoặc <code>users</code> (tài khoản có tên + phân quyền). Từ 1.10.0 <code>users</code> là đa người dùng thật: mỗi người sở hữu hộp thư của mình và không thấy của người khác, vai trò là <code>owner</code>, <code>operator</code> hoặc <code>viewer</code>. Tạo bằng <code>skimmail user add</code>. Còn một giá trị thứ ba, <code>none</code>, tắt hẳn xác thực; nó đòi thêm <code>SKIMMAIL_ALLOW_AUTH_NONE=1</code> trong environment của tiến trình, vì <code>auth.mode</code> ghi được từ cả UI lẫn CLI nên một phiên bị chiếm không được phép tự hạ cấp cả instance.</td>
 </tr>
 <tr>
 <td><code>DATA_DIR</code></td>
