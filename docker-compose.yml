@@ -13,11 +13,17 @@
 # will fail to pull. Postgres, MySQL and S3 support are compiled into this
 # image too; select them with DB_DRIVER / BLOB_STORE below.
 #
-# Pin a version instead of latest:  SKIMMAIL_VERSION=v1.0.0 docker compose up -d
+# Pin a version instead of latest:  SKIMMAIL_VERSION=v1.15.0 docker compose up -d
 #
 # First run prints a one-time claim code to the log — you need it to claim the
 # instance before anyone else can:
-#   docker logs skimmail 2>&1 | grep 'claim code'
+#   docker compose logs skimmail | grep 'claim code'
+#
+# (`docker compose logs` resolves by SERVICE name, which is what this file
+# defines. The plain `docker logs <name>` form does NOT work here: Compose
+# names the container <project>-<service>-1, e.g. skimmail-skimmail-1, so it
+# answers "No such container". That form is only correct after
+# `docker run --name skimmail`, which is the README's other recipe.)
 #
 # Health: the image is distroless (no shell), so check from the host:
 #   curl http://localhost:8080/healthz
