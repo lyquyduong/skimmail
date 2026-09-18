@@ -84,10 +84,15 @@ headline feature still on the roadmap</strong>. Release-by-release detail:
 <li><strong>Read-fast</strong> power tools — snooze, pin, <strong>Starred</strong> across every account,
   split-inbox <strong>bundles</strong>, multi-select + bulk actions, <strong>move to any folder</strong>
   with undo, VIP / mute senders listed and undoable in Settings, one-click
-  <strong>unsubscribe</strong> (RFC 8058).</li>
+  <strong>unsubscribe</strong> (RFC 8058), and an <strong>unsubscribe shortlist</strong> that ranks the
+  bulk senders you mostly leave unread — selected on the sender's own
+  List-Unsubscribe header, so account-security mail is never offered.</li>
 <li><strong>Keyboard-first</strong> (Superhuman-style) + <strong>Focus/triage mode</strong> + <strong>command palette</strong>
   (⌘K) + <strong>PWA</strong> (installable, offline shell) + <strong>i18n</strong> (English / Tiếng Việt /
   中文, dark &amp; light themes).</li>
+<li><strong>Server keywords</strong> — the flags your other mail clients already set are shown
+  as read-only chips. Off by default: most mailboxes have none, and an empty row
+  of chips is worse than no row.</li>
 <li><strong>Screenshot-safe mode</strong> — every displayed address, name, subject, preview line
   and attachment name is replaced with a realistic stand-in and message bodies
   are not rendered at all, so you can file a bug or write a post with a real
@@ -134,6 +139,11 @@ headline feature still on the roadmap</strong>. Release-by-release detail:
   Those helpers and the WireGuard engine are <strong>plugins downloaded on demand</strong>
   against a signed, SHA256-pinned index; install, update and remove them from
   <strong>Settings ▸ Plugins</strong>.</li>
+<li><strong>How far back to sync, and what to keep offline</strong> — a <strong>sync depth</strong> per
+  account (30 days by default, or full history), set instance-wide in
+  <strong>Settings ▸ Sync</strong> and overridable per mailbox. Message bodies you open are
+  <strong>cached locally</strong> so re-reading costs nothing, with background prefetch you
+  can switch off if you would rather it never read ahead.</li>
 <li><strong>Where your mail is kept, and for how long</strong> — cached message bodies live in
   a blob store you choose: the local filesystem, or any S3-compatible bucket,
   switchable from <strong>Settings ▸ Storage</strong> with a real connection test and a
@@ -156,8 +166,9 @@ headline feature still on the roadmap</strong>. Release-by-release detail:
 <li><strong>Security layer</strong> — a one-time <strong>claim code</strong> gates the very first sign-in;
   credentials, OAuth tokens and cached message bodies are <strong>encrypted at rest</strong>
   (AES-256-GCM); plus login rate-limit + lockout, 2FA, a server-enforced idle
-  lock, CSRF/origin checks, an SSRF guard, signed releases and a signed plugin
-  index, and an append-only audit log.</li>
+  lock that draws over <strong>every open tab</strong> rather than only the one you touched,
+  CSRF/origin checks, an SSRF guard, signed releases and a signed plugin index,
+  and an append-only audit log.</li>
 <li><strong>Yours, and it stays that way</strong> — one Go binary with the React SPA inside,
   SQLite built in (PostgreSQL and MySQL optional; MySQL is experimental),
   <strong>always-on background sync</strong>, and <strong>no phone-home</strong>. <strong>Community Edition is
@@ -215,9 +226,13 @@ username blank.</p>
 <p>Add an <strong>IMAP</strong> account: email · host (e.g. <code>imap.gmail.com</code>) · port <code>993</code> ·
 security <code>TLS</code> · <strong>app password</strong>.</p>
 <blockquote>
-<p>Gmail/Outlook require an <strong>app-specific password</strong> (not your normal password)
-unless OAuth is configured. To enable the "Add with Google/Microsoft" buttons,
-set the OAuth credentials below and a public <code>BASE_URL</code>.</p>
+<p><strong>Gmail</strong> takes an <strong>app-specific password</strong> (not your normal password) — two
+clicks, no Cloud project. <strong>Outlook.com and Hotmail cannot</strong>: Microsoft issues
+no app passwords for personal accounts and has switched basic authentication
+off, so those mailboxes need OAuth.</p>
+<p>To enable the "Add with Google/Microsoft" buttons, set the OAuth credentials
+below. A public <code>BASE_URL</code> is <strong>not</strong> required — an instance without one
+finishes the sign-in by pasting the address the browser lands on.</p>
 </blockquote>
 <p>Press <strong>↻ Sync</strong> (or wait for the background poll). New mail then pushes in
 real-time over WebSocket.</p>
@@ -236,8 +251,10 @@ real-time over WebSocket.</p>
 <li><strong>Keyboard</strong> — <code>?</code> shows all shortcuts: <code>j</code>/<code>k</code> move · <code>Enter</code>/<code>o</code> open ·
   <code>e</code> archive · <code>#</code> delete · <code>s</code> snooze · <code>x</code> select · <code>Space</code> quick-peek ·
   <code>/</code> search · <strong><code>f</code> Focus mode</strong> ("Get to Zero") · <code>Esc</code> close.</li>
-<li><strong>Tags</strong> — a rule can tag matching mail; click a tag chip in the list to filter
-  by it.</li>
+<li><strong>Tags</strong> — tag mail yourself from the message list or the reading pane, or let
+  a rule do it; click a tag chip to filter, or type <code>tag:name</code> in the search box.
+  Tags come off again as easily as they go on, and a new rule can be applied to
+  mail you already have after showing you how many messages it would touch.</li>
 <li><strong>Images</strong> — a blocked-image banner offers <strong>Show images</strong>, plus <strong>Always</strong> or
   <strong>Never from this sender</strong> (both reversible; the instance-wide switch is in
   <strong>Settings ▸ Security</strong>).</li>
@@ -278,7 +295,7 @@ every variable, the config planes, and what overrides what — is in the
 <tr>
 <td><code>BASE_URL</code></td>
 <td>–</td>
-<td>public URL — <strong>required</strong> for OAuth redirect, WebSocket, PWA</td>
+<td>public URL — needed for the OAuth <strong>redirect</strong> flow, WebSocket and PWA. OAuth still works without it via the paste flow.</td>
 </tr>
 <tr>
 <td><code>TRUST_PROXY</code></td>

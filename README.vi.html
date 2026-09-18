@@ -71,10 +71,16 @@ năng lớn duy nhất còn nằm trong roadmap</strong>. Chi tiết từng bả
 <li><strong>Đọc nhanh</strong> — tạm ẩn (snooze), ghim (pin), <strong>Đã gắn sao</strong> trên mọi tài khoản,
   <strong>bundles</strong> chia hộp thư, chọn nhiều + thao tác hàng loạt, <strong>chuyển vào thư mục
   bất kỳ</strong> có nút hoàn tác, sender <strong>VIP / mute</strong> liệt kê và gỡ được ngay trong
-  Settings, <strong>hủy đăng ký 1 chạm</strong> (RFC 8058).</li>
+  Settings, <strong>hủy đăng ký 1 chạm</strong> (RFC 8058), và một <strong>danh sách rút gọn hủy
+  đăng ký</strong> xếp hạng những người gửi hàng loạt mà bạn hầu như không đọc — chọn
+  theo chính header List-Unsubscribe của người gửi, nên thư bảo mật tài khoản
+  không bao giờ bị đưa vào.</li>
 <li><strong>Bàn phím trước hết</strong> (kiểu Superhuman) + <strong>chế độ Focus/triage</strong> + <strong>command
   palette</strong> (⌘K) + <strong>PWA</strong> (cài được, chạy offline phần vỏ) + <strong>đa ngôn ngữ</strong>
   (English / Tiếng Việt / 中文, giao diện sáng &amp; tối).</li>
+<li><strong>Server keywords</strong> — những cờ mà các mail client khác của bạn đã đặt được
+  hiện thành chip chỉ-đọc. Mặc định tắt: phần lớn hộp thư không có cờ nào, và
+  một hàng chip rỗng còn tệ hơn là không có hàng nào.</li>
 <li><strong>Chế độ an toàn khi chụp màn hình</strong> — mọi địa chỉ, tên, tiêu đề, dòng xem
   trước và tên tệp đính kèm hiển thị đều được thay bằng dữ liệu giả trông như
   thật, và thân thư không render chút nào, nên bạn có thể báo lỗi hay viết bài
@@ -121,6 +127,11 @@ năng lớn duy nhất còn nằm trong roadmap</strong>. Chi tiết từng bả
   đó và engine WireGuard là <strong>plugin tải về theo nhu cầu</strong>, đối chiếu với một chỉ
   mục đã ký và ghim SHA256; cài, cập nhật và gỡ chúng ngay tại
   <strong>Settings ▸ Plugins</strong>.</li>
+<li><strong>Sync về xa tới đâu, và giữ offline những gì</strong> — <strong>độ sâu sync</strong> theo từng
+  tài khoản (mặc định 30 ngày, hoặc toàn bộ lịch sử), đặt chung ở <strong>Settings ▸
+  Sync</strong> và ghi đè được cho từng hộp thư. Thân thư bạn đã mở được <strong>cache ở
+  máy</strong> nên đọc lại không tốn gì, kèm prefetch nền có thể tắt nếu bạn không
+  muốn nó đọc trước.</li>
 <li><strong>Thư của bạn nằm ở đâu, và nằm bao lâu</strong> — thân thư đã cache nằm trong một
   blob store do bạn chọn: hệ thống tệp tại máy, hoặc bất kỳ bucket tương thích
   S3 nào, đổi qua lại ngay ở <strong>Settings ▸ Storage</strong> với nút kiểm tra kết nối
@@ -145,7 +156,8 @@ năng lớn duy nhất còn nằm trong roadmap</strong>. Chi tiết từng bả
 <li><strong>Lớp bảo mật</strong> — một <strong>mã claim dùng một lần</strong> chặn ngay lần đăng nhập đầu tiên;
   credential, token OAuth và nội dung thư đã cache đều <strong>mã hoá at-rest</strong>
   (AES-256-GCM); cùng với rate-limit + lockout đăng nhập, 2FA, khoá màn hình khi
-  rảnh do server cưỡng chế, kiểm tra CSRF/Origin, chống SSRF, bản phát hành và chỉ
+  rảnh do server cưỡng chế và phủ lên <strong>mọi tab đang mở</strong> chứ không chỉ tab bạn
+  vừa chạm, kiểm tra CSRF/Origin, chống SSRF, bản phát hành và chỉ
   mục plugin đều được ký, và <strong>audit log</strong> chỉ ghi thêm.</li>
 <li><strong>Của bạn, và vẫn cứ là của bạn</strong> — một binary Go duy nhất với React SPA nhúng
   bên trong, SQLite tích hợp sẵn (PostgreSQL và MySQL tuỳ chọn; MySQL là thử
@@ -202,9 +214,13 @@ username.</p>
 <p>Thêm tài khoản <strong>IMAP</strong>: email · host (vd <code>imap.gmail.com</code>) · port <code>993</code> · bảo mật
 <code>TLS</code> · <strong>app password</strong>.</p>
 <blockquote>
-<p>Gmail/Outlook yêu cầu <strong>app-password</strong> riêng (không phải mật khẩu thường) trừ khi
-đã cấu hình OAuth. Muốn bật nút "Thêm bằng Google/Microsoft", hãy đặt OAuth
-credentials bên dưới + <code>BASE_URL</code> công khai.</p>
+<p><strong>Gmail</strong> dùng được <strong>app password</strong> riêng (không phải mật khẩu thường) — hai cú
+bấm, không cần Cloud project. <strong>Outlook.com và Hotmail thì không</strong>: Microsoft
+không cấp app password cho tài khoản cá nhân và đã tắt xác thực cơ bản, nên
+những hộp thư đó buộc phải dùng OAuth.</p>
+<p>Muốn bật nút "Thêm bằng Google/Microsoft", hãy đặt OAuth credentials bên dưới.
+<strong>Không</strong> bắt buộc phải có <code>BASE_URL</code> công khai — instance không có thì hoàn tất
+đăng nhập bằng cách dán địa chỉ mà trình duyệt đáp xuống.</p>
 </blockquote>
 <p>Bấm <strong>↻ Sync</strong> (hoặc đợi poll nền). Sau đó mail mới đẩy về thời gian thực qua WebSocket.</p>
 <hr />
@@ -222,8 +238,10 @@ credentials bên dưới + <code>BASE_URL</code> công khai.</p>
 <li><strong>Bàn phím</strong> — <code>?</code> hiện toàn bộ phím tắt: <code>j</code>/<code>k</code> di chuyển · <code>Enter</code>/<code>o</code> mở ·
   <code>e</code> archive · <code>#</code> delete · <code>s</code> snooze · <code>x</code> chọn · <code>Space</code> xem nhanh ·
   <code>/</code> tìm kiếm · <strong><code>f</code> chế độ Focus</strong> ("Get to Zero") · <code>Esc</code> đóng.</li>
-<li><strong>Tag</strong> — một rule có thể gắn tag cho mail khớp; bấm chip tag trong danh sách để
-  lọc theo tag đó.</li>
+<li><strong>Tag</strong> — tự gắn tag ngay trong danh sách thư hoặc khung đọc, hoặc để rule làm
+  hộ; bấm chip tag để lọc, hoặc gõ <code>tag:tên</code> vào ô tìm kiếm. Gỡ tag ra cũng dễ
+  như gắn vào, và một rule mới có thể áp lên thư đã có sau khi cho bạn xem trước
+  nó sẽ chạm vào bao nhiêu thư.</li>
 <li><strong>Ảnh</strong> — banner ảnh bị chặn có <strong>Show images</strong>, kèm <strong>Always</strong> hoặc <strong>Never
   from this sender</strong> (đều đảo ngược được; công tắc cho cả instance nằm ở
   <strong>Settings ▸ Bảo mật</strong>).</li>
@@ -264,7 +282,7 @@ mọi biến, các mặt phẳng cấu hình và thứ gì đè lên thứ gì �
 <tr>
 <td><code>BASE_URL</code></td>
 <td>–</td>
-<td>URL công khai — <strong>bắt buộc</strong> cho OAuth redirect, WebSocket, PWA</td>
+<td>URL công khai — cần cho flow OAuth <strong>redirect</strong>, WebSocket và PWA. Không có nó OAuth vẫn chạy qua flow dán tay.</td>
 </tr>
 <tr>
 <td><code>TRUST_PROXY</code></td>

@@ -66,9 +66,13 @@ IMAP 为核心 + Gmail/Outlook OAuth——打包为<strong>单个 Go 二进制</
   的邮件。</li>
 <li><strong>快速阅读</strong>工具——稍后处理（snooze）、置顶（pin）、跨全部账户的<strong>已加星标</strong>、
   分类收件箱 <strong>bundles</strong>、多选 + 批量操作、<strong>移动到任意文件夹</strong>（可撤销）、
-  <strong>VIP / 静音</strong>发件人（在设置里可查看并撤销）、一键<strong>退订</strong>（RFC 8058）。</li>
+  <strong>VIP / 静音</strong>发件人（在设置里可查看并撤销）、一键<strong>退订</strong>（RFC 8058），以及
+  <strong>退订短名单</strong>——把你基本不读的批量发件人排出优先级，依据发件人自己的
+  List-Unsubscribe 头来挑选，所以账户安全类邮件永远不会被列进来。</li>
 <li><strong>键盘优先</strong>（Superhuman 风格）+ <strong>专注/处理模式</strong> + <strong>命令面板</strong>（⌘K）+ <strong>PWA</strong>
   （可安装、外壳离线可用）+ <strong>多语言</strong>（English / Tiếng Việt / 中文，深色与浅色主题）。</li>
+<li><strong>服务端关键字</strong>——你其他邮件客户端已经打上的标记会以只读小标形式显示。默认关
+  闭：大多数邮箱根本没有这些标记，而一排空标比没有这一排更糟。</li>
 <li><strong>截图安全模式</strong>——界面上显示的每个地址、姓名、主题、预览行和附件名都会被替换成
   以假乱真的替身，邮件正文则完全不渲染，于是你可以在真实收件箱开着的情况下提交
   issue 或写文章。默认关闭，按设备生效。</li>
@@ -107,6 +111,10 @@ IMAP 为核心 + Gmail/Outlook OAuth——打包为<strong>单个 Go 二进制</
   SkimMail 暴露出去，并提供二维码方便手机打开。这些程序和 WireGuard 引擎都是<strong>按需
   下载的插件</strong>，对照一份已签名、按 SHA256 固定的索引校验；在
   <strong>Settings ▸ 插件</strong>里安装、更新和删除它们。</li>
+<li><strong>往回同步多久、离线保留什么</strong>——每个账户都有自己的<strong>同步深度</strong>（默认 30 天，
+  也可以是全部历史），在 <strong>Settings ▸ Sync</strong> 里统一设定，并可按邮箱单独覆盖。你
+  打开过的邮件正文会<strong>缓存在本地</strong>，重读不再有成本；后台预取可以关掉，如果你不
+  希望它提前读取。</li>
 <li><strong>你的邮件存在哪里、存多久</strong>——缓存下来的邮件正文放在你选择的 blob 存储里：本
   地文件系统，或任何兼容 S3 的存储桶，可在 <strong>Settings ▸ Storage</strong> 里切换，带真实
   的连接测试和一次中断后可续跑的迁移。留存这一面在 <strong>Settings ▸ Security</strong>：当前
@@ -123,7 +131,8 @@ IMAP 为核心 + Gmail/Outlook OAuth——打包为<strong>单个 Go 二进制</
   人完全看不到，角色为 <strong>owner</strong>、<strong>operator</strong> 或 <strong>viewer</strong>；用
   <code>skimmail user add</code> 创建。单人实例依旧和以前一样简单。</li>
 <li><strong>安全层</strong>——首次登录由<strong>一次性认领码</strong>把关；凭据、OAuth 令牌与缓存的邮件正文均
-  <strong>静态加密</strong>（AES-256-GCM）；另有登录限流 + 锁定、2FA、由服务端强制的空闲锁屏、
+  <strong>静态加密</strong>（AES-256-GCM）；另有登录限流 + 锁定、2FA、由服务端强制的空闲锁屏——
+  它会覆盖<strong>每一个打开的标签页</strong>，而不只是你刚碰过的那一个、
   CSRF/Origin 校验、SSRF 防护、已签名的发行版与插件索引，以及只追加的审计日志。</li>
 <li><strong>属于你，并且一直属于你</strong>——单个 Go 二进制内嵌 React SPA，内置 SQLite
   （PostgreSQL 与 MySQL 可选；MySQL 为实验性），<strong>常驻后台同步</strong>，并且<strong>不回传
@@ -176,8 +185,11 @@ docker logs skimmail 2&gt;&amp;1 | grep 'claim code'          # docker run（仅
 <p>添加 <strong>IMAP</strong> 账户：邮箱 · host（如 <code>imap.gmail.com</code>） · 端口 <code>993</code> · 安全 <code>TLS</code> ·
 <strong>应用专用密码</strong>。</p>
 <blockquote>
-<p>除非已配置 OAuth，否则 Gmail/Outlook 需要<strong>应用专用密码</strong>（不是常规密码）。要启用
-“使用 Google/Microsoft 添加”按钮，请配置下方的 OAuth 凭据并设置公开的 <code>BASE_URL</code>。</p>
+<p><strong>Gmail</strong> 可以使用<strong>应用专用密码</strong>（不是常规密码）——两次点击，无需 Cloud 项目。
+<strong>Outlook.com 和 Hotmail 不行</strong>：Microsoft 不为个人账户签发应用专用密码，并已关闭
+基本身份验证，因此这些邮箱必须使用 OAuth。</p>
+<p>要启用“使用 Google/Microsoft 添加”按钮，请配置下方的 OAuth 凭据。<strong>不</strong>要求公开的
+<code>BASE_URL</code>——没有公网地址的实例通过粘贴浏览器最终跳转到的地址来完成登录。</p>
 </blockquote>
 <p>点击 <strong>↻ Sync</strong>（或等待后台轮询）。之后新邮件会通过 WebSocket 实时推送。</p>
 <hr />
@@ -195,7 +207,9 @@ docker logs skimmail 2&gt;&amp;1 | grep 'claim code'          # docker run（仅
 <li><strong>键盘</strong>——<code>?</code> 显示全部快捷键：<code>j</code>/<code>k</code> 移动 · <code>Enter</code>/<code>o</code> 打开 · <code>e</code> 归档 ·
   <code>#</code> 删除 · <code>s</code> 稍后 · <code>x</code> 选择 · <code>Space</code> 快速预览 · <code>/</code> 搜索 ·
   <strong><code>f</code> 专注模式</strong>（“清空收件箱”） · <code>Esc</code> 关闭。</li>
-<li><strong>标签（tag）</strong>——规则可以给匹配的邮件打标签；点击列表中的标签小标即可按它筛选。</li>
+<li><strong>标签（tag）</strong>——你可以在邮件列表或阅读窗格里自己打标签，也可以交给规则；点击
+  标签小标即可筛选，或在搜索框里输入 <code>tag:名称</code>。标签取下来和打上去一样容易，新
+  规则还能应用到你已有的邮件上——并且会先告诉你它将影响多少封。</li>
 <li><strong>图片</strong>——图片被拦截时的横幅提供 <strong>Show images</strong>，以及 <strong>Always</strong> 或
   <strong>Never from this sender</strong>（两者都可撤销；影响整个实例的开关在
   <strong>Settings ▸ 安全</strong>）。</li>
@@ -235,7 +249,7 @@ docker logs skimmail 2&gt;&amp;1 | grep 'claim code'          # docker run（仅
 <tr>
 <td><code>BASE_URL</code></td>
 <td>–</td>
-<td>公开 URL——OAuth 回调、WebSocket、PWA <strong>必需</strong></td>
+<td>公开 URL——OAuth <strong>重定向</strong>流程、WebSocket 与 PWA 需要。没有它 OAuth 仍可通过粘贴流程使用。</td>
 </tr>
 <tr>
 <td><code>TRUST_PROXY</code></td>
